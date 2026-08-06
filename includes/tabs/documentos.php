@@ -7,6 +7,8 @@ $groups = [];
 $filesByGroup = [];
 $usingFiles = false;
 
+ensure_cv_master_document_groups();
+
 try {
     if (db_available()) {
         $groups = db()->query('SELECT * FROM document_groups ORDER BY sort_order ASC, name ASC')->fetchAll();
@@ -37,14 +39,19 @@ if (!$groups) {
 
 $sections = [
     [
+        'title' => 'CVs maestros',
+        'subtitle' => 'Español e inglés · base completa para derivar variantes',
+        'match' => static fn (array $g): bool => str_starts_with((string) ($g['slug'] ?? ''), 'cv-master'),
+    ],
+    [
         'title' => 'CVs en español',
         'subtitle' => 'Seis familias · DOCX / PDF / TXT',
-        'match' => static fn (array $g): bool => $g['category'] === 'cv' && $g['language'] === 'es',
+        'match' => static fn (array $g): bool => $g['category'] === 'cv' && $g['language'] === 'es' && !str_starts_with((string) ($g['slug'] ?? ''), 'cv-master'),
     ],
     [
         'title' => 'CVs en inglés',
         'subtitle' => 'Seis familias · DOCX / PDF / TXT',
-        'match' => static fn (array $g): bool => $g['category'] === 'cv' && $g['language'] === 'en',
+        'match' => static fn (array $g): bool => $g['category'] === 'cv' && $g['language'] === 'en' && !str_starts_with((string) ($g['slug'] ?? ''), 'cv-master'),
     ],
     [
         'title' => 'Cartas de presentación',

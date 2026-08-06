@@ -57,4 +57,37 @@
       }
     });
   });
+
+  document.querySelectorAll(".nav-dropdown").forEach(function (wrap) {
+    const toggle = wrap.querySelector(".nav-dropdown-toggle");
+    if (!toggle) return;
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      const open = wrap.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      document.querySelectorAll(".nav-dropdown").forEach(function (other) {
+        if (other !== wrap) {
+          other.classList.remove("is-open");
+          const t = other.querySelector(".nav-dropdown-toggle");
+          if (t) t.setAttribute("aria-expanded", "false");
+        }
+      });
+    });
+  });
+  document.addEventListener("click", function () {
+    document.querySelectorAll(".nav-dropdown.is-open").forEach(function (wrap) {
+      wrap.classList.remove("is-open");
+      const t = wrap.querySelector(".nav-dropdown-toggle");
+      if (t) t.setAttribute("aria-expanded", "false");
+    });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      document.querySelectorAll(".nav-dropdown.is-open").forEach(function (wrap) {
+        wrap.classList.remove("is-open");
+        const t = wrap.querySelector(".nav-dropdown-toggle");
+        if (t) t.setAttribute("aria-expanded", "false");
+      });
+    }
+  });
 })();

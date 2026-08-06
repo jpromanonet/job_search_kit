@@ -229,7 +229,10 @@ function seed_document_groups(PDO $pdo): void
     ];
 
     $groups = [
-        // CVs ES first
+        // Master CVs first
+        ['CV maestro (ES)', 'cv-master-es', 'cv', 'es', 1],
+        ['Master CV (EN)', 'cv-master-en', 'cv', 'en', 2],
+        // CVs ES
         ['Technical Lead / Software Delivery Lead', 'cv-tech-lead-es', 'cv', 'es', 10],
         ['Engineering Manager / Head of Engineering', 'cv-em-es', 'cv', 'es', 20],
         ['Senior Full-stack Software Engineer', 'cv-fullstack-es', 'cv', 'es', 30],

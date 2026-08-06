@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "question": "¿Cuál es el problema más urgente que esta persona debería destrabar en los primeros 90 días?",
+    "why": "Demuestra que pensás en impacto temprano, no solo en “entrar al rol”.",
+    "tip": "Anotá la respuesta y usala después para proponer un plan concreto de 30/60/90."
+  },
+  {
+    "id": 2,
+    "question": "¿Cómo miden el éxito de este rol a los 6 meses?",
+    "why": "Muestra que te importa el outcome, no solo las tareas del día a día.",
+    "tip": "Si contestan vago (“ser un buen teammate”), pedí 1–2 métricas o señales observables."
+  },
+  {
+    "id": 3,
+    "question": "¿Qué trade-offs están viviendo hoy entre velocidad, calidad y confiabilidad?",
+    "why": "Señala madurez técnica: entendés que no existe “hacer todo perfecto ya”.",
+    "tip": "Escuchá qué priorizan de verdad; eso te dice cómo trabajarían con vos."
+  },
+  {
+    "id": 4,
+    "question": "Cuando hay desacuerdo técnico o de producto, ¿cómo se decide y quién tiene la última palabra?",
+    "why": "Interés real en cómo opera el equipo, no solo en el stack.",
+    "tip": "Útil para detectar micromanagement, caos o ownership claro."
+  },
+  {
+    "id": 5,
+    "question": "¿Qué quedó en el backlog técnico que el equipo quiere atacar y todavía no pudo?",
+    "why": "Parece curiosidad genuina por el sistema y sus dolores reales.",
+    "tip": "Si menciona deuda, incidentes o migraciones, conectalo con tu experiencia en 1 frase."
+  },
+  {
+    "id": 6,
+    "question": "¿Cómo está estructurado el ownership alrededor de este rol: on-call, stakeholders y decisiones del día a día?",
+    "why": "Demuestra que pensás en cómo vas a trabajar, no solo en el título.",
+    "tip": "Pregunta práctica; evita que suene a “¿cuánto overtime hay?”."
+  },
+  {
+    "id": 7,
+    "question": "¿Hay algo importante sobre el rol o el equipo que les gustaría que hubiera preguntado?",
+    "why": "Cierra con apertura y deja que revelen lo que más les importa.",
+    "tip": "Escuchá en silencio: suele salir la restricción o la expectativa no escrita."
+  }
+]

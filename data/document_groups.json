@@ -1,5 +1,25 @@
 [
   {
+    "id": 35,
+    "name": "CV maestro (ES)",
+    "slug": "cv-master-es",
+    "category": "cv",
+    "language": "es",
+    "body_text": null,
+    "sort_order": 1,
+    "description": "Fuente completa en español. De acá salen las variantes por rol."
+  },
+  {
+    "id": 36,
+    "name": "Master CV (EN)",
+    "slug": "cv-master-en",
+    "category": "cv",
+    "language": "en",
+    "body_text": null,
+    "sort_order": 2,
+    "description": "Full English source. Role-specific CVs are tailored from this."
+  },
+  {
     "id": 1,
     "name": "Technical Lead / Software Delivery Lead",
     "slug": "cv-tech-lead-es",

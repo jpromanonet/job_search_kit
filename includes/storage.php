@@ -235,6 +235,125 @@ function update_document_group_text(int $id, string $body, ?string $description 
     return false;
 }
 
+/**
+ * Asegura filas de CV maestro ES/EN (archivo JSON y MySQL si está disponible).
+ */
+function ensure_cv_master_document_groups(): void
+{
+    $wanted = [
+        [
+            'id' => 35,
+            'name' => 'CV maestro (ES)',
+            'slug' => 'cv-master-es',
+            'category' => 'cv',
+            'language' => 'es',
+            'body_text' => null,
+            'sort_order' => 1,
+            'description' => 'Fuente completa en español. De acá salen las variantes por rol.',
+        ],
+        [
+            'id' => 36,
+            'name' => 'Master CV (EN)',
+            'slug' => 'cv-master-en',
+            'category' => 'cv',
+            'language' => 'en',
+            'body_text' => null,
+            'sort_order' => 2,
+            'description' => 'Full English source. Role-specific CVs are tailored from this.',
+        ],
+    ];
+
+    $groups = load_document_groups();
+    $bySlug = [];
+    foreach ($groups as $i => $g) {
+        $bySlug[(string) ($g['slug'] ?? '')] = $i;
+    }
+    $changed = false;
+    $maxId = 0;
+    foreach ($groups as $g) {
+        $maxId = max($maxId, (int) ($g['id'] ?? 0));
+    }
+    foreach ($wanted as $row) {
+        $slug = $row['slug'];
+        if (isset($bySlug[$slug])) {
+            $i = $bySlug[$slug];
+            foreach (['name', 'category', 'language', 'sort_order', 'description'] as $key) {
+                if (($groups[$i][$key] ?? null) !== $row[$key]) {
+                    $groups[$i][$key] = $row[$key];
+                    $changed = true;
+                }
+            }
+            continue;
+        }
+        $maxId++;
+        $row['id'] = $maxId;
+        $groups[] = $row;
+        $changed = true;
+    }
+    if ($changed) {
+        save_document_groups($groups);
+    }
+
+    if (!function_exists('db_available') || !db_available()) {
+        return;
+    }
+    try {
+        $pdo = db();
+    } catch (Throwable $e) {
+        return;
+    }
+
+    $exists = $pdo->prepare('SELECT id FROM document_groups WHERE slug = :slug LIMIT 1');
+    $insert = $pdo->prepare(
+        'INSERT INTO document_groups (name, slug, category, language, body_text, sort_order, description)
+         VALUES (:name, :slug, :category, :language, :body_text, :sort_order, :description)'
+    );
+    $update = $pdo->prepare(
+        'UPDATE document_groups
+         SET name = :name, category = :category, language = :language, sort_order = :sort_order, description = :description
+         WHERE slug = :slug'
+    );
+
+    foreach ($wanted as $row) {
+        $exists->execute([':slug' => $row['slug']]);
+        if ($exists->fetch()) {
+            $update->execute([
+                ':name' => $row['name'],
+                ':category' => $row['category'],
+                ':language' => $row['language'],
+                ':sort_order' => $row['sort_order'],
+                ':description' => $row['description'],
+                ':slug' => $row['slug'],
+            ]);
+            continue;
+        }
+        try {
+            $insert->execute([
+                ':name' => $row['name'],
+                ':slug' => $row['slug'],
+                ':category' => $row['category'],
+                ':language' => $row['language'],
+                ':body_text' => $row['body_text'],
+                ':sort_order' => $row['sort_order'],
+                ':description' => $row['description'],
+            ]);
+        } catch (Throwable $e) {
+            // description column may be missing on older schemas
+            $pdo->prepare(
+                'INSERT INTO document_groups (name, slug, category, language, body_text, sort_order)
+                 VALUES (:name, :slug, :category, :language, :body_text, :sort_order)'
+            )->execute([
+                ':name' => $row['name'],
+                ':slug' => $row['slug'],
+                ':category' => $row['category'],
+                ':language' => $row['language'],
+                ':body_text' => $row['body_text'],
+                ':sort_order' => $row['sort_order'],
+            ]);
+        }
+    }
+}
+
 function next_document_file_id(array $files): int
 {
     $max = 0;

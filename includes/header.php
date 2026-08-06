@@ -15,13 +15,18 @@ $tabs = [
     'plan' => 'Plan 100 días',
     'portales' => 'Portales',
     'recomendaciones' => 'Recomendaciones',
-    'hr_faq' => 'HR FAQ',
     'tecnologias' => 'Tecnologías',
     'documentos' => 'Documentos',
     'tracker' => 'Tracker',
     'comparador' => 'Comparador',
     'metricas' => 'Métricas',
 ];
+
+$faqTabs = [
+    'hr_faq' => 'HR FAQ',
+    'preguntas' => 'Mis preguntas',
+];
+$faqActive = array_key_exists($activeTab, $faqTabs);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -39,6 +44,21 @@ $tabs = [
     </div>
     <nav class="nav">
       <?php foreach ($tabs as $key => $label): ?>
+        <?php if ($key === 'tecnologias'): ?>
+          <div class="nav-dropdown<?= $faqActive ? ' is-active' : '' ?>">
+            <button type="button" class="nav-dropdown-toggle<?= $faqActive ? ' is-active' : '' ?>" aria-expanded="false" aria-haspopup="true">
+              FAQ
+              <span class="nav-caret" aria-hidden="true"></span>
+            </button>
+            <div class="nav-dropdown-menu" role="menu">
+              <?php foreach ($faqTabs as $faqKey => $faqLabel): ?>
+                <a role="menuitem"
+                   class="<?= $activeTab === $faqKey ? 'is-active' : '' ?>"
+                   href="<?= e(url('/index.php?tab=' . $faqKey)) ?>"><?= e($faqLabel) ?></a>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        <?php endif; ?>
         <a class="<?= $activeTab === $key ? 'is-active' : '' ?>"
            href="<?= e(url('/index.php?tab=' . $key)) ?>"><?= e($label) ?></a>
       <?php endforeach; ?>

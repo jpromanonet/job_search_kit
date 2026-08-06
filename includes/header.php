@@ -42,7 +42,16 @@ $faqActive = array_key_exists($activeTab, $faqTabs);
     <div class="brand">
       <a href="<?= e(url('/index.php?tab=plan')) ?>"><?= e($appName) ?></a>
     </div>
-    <nav class="nav">
+    <button type="button"
+            class="nav-toggle"
+            id="navToggle"
+            aria-controls="siteNav"
+            aria-expanded="false"
+            aria-label="Abrir menú">
+      <span class="nav-toggle-bars" aria-hidden="true"></span>
+    </button>
+    <div class="nav-backdrop" id="navBackdrop" hidden></div>
+    <nav class="nav" id="siteNav">
       <?php foreach ($tabs as $key => $label): ?>
         <?php if ($key === 'tecnologias'): ?>
           <div class="nav-dropdown<?= $faqActive ? ' is-active' : '' ?>">

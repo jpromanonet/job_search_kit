@@ -74,6 +74,49 @@
       });
     });
   });
+
+  const navToggle = document.getElementById("navToggle");
+  const navBackdrop = document.getElementById("navBackdrop");
+  const siteNav = document.getElementById("siteNav");
+
+  function setNavOpen(open) {
+    document.body.classList.toggle("nav-open", open);
+    if (navToggle) {
+      navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      navToggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+    }
+    if (navBackdrop) {
+      if (open) navBackdrop.removeAttribute("hidden");
+      else navBackdrop.setAttribute("hidden", "");
+    }
+    if (!open) {
+      document.querySelectorAll(".nav-dropdown.is-open").forEach(function (wrap) {
+        wrap.classList.remove("is-open");
+        const t = wrap.querySelector(".nav-dropdown-toggle");
+        if (t) t.setAttribute("aria-expanded", "false");
+      });
+    }
+  }
+
+  if (navToggle) {
+    navToggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      setNavOpen(!document.body.classList.contains("nav-open"));
+    });
+  }
+  if (navBackdrop) {
+    navBackdrop.addEventListener("click", function () {
+      setNavOpen(false);
+    });
+  }
+  if (siteNav) {
+    siteNav.addEventListener("click", function (e) {
+      e.stopPropagation();
+      const link = e.target.closest("a");
+      if (link) setNavOpen(false);
+    });
+  }
+
   document.addEventListener("click", function () {
     document.querySelectorAll(".nav-dropdown.is-open").forEach(function (wrap) {
       wrap.classList.remove("is-open");
@@ -83,11 +126,15 @@
   });
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
+      setNavOpen(false);
       document.querySelectorAll(".nav-dropdown.is-open").forEach(function (wrap) {
         wrap.classList.remove("is-open");
         const t = wrap.querySelector(".nav-dropdown-toggle");
         if (t) t.setAttribute("aria-expanded", "false");
       });
     }
+  });
+  window.addEventListener("resize", function () {
+    if (window.innerWidth > 960) setNavOpen(false);
   });
 })();

@@ -1,0 +1,11 @@
+config.local.php
+uploads/**
+!uploads/.gitkeep
+_docx_extract/
+_plan.zip
+_plan_text.txt
+*.log
+.DS_Store
+Thumbs.db
+data/applications.json
+data/day_progress.json

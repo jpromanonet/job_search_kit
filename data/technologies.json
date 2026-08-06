@@ -1,0 +1,185 @@
+[
+  {
+    "area": "Languages & front end",
+    "technologies": [
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "Node.js",
+      "React",
+      "React Native",
+      "Next.js",
+      "Angular/AngularJS",
+      "Vue",
+      "Svelte",
+      "jQuery",
+      "Ajax",
+      "HTML5/CSS3",
+      "Bootstrap"
+    ]
+  },
+  {
+    "area": "Back end & frameworks",
+    "technologies": [
+      "Django",
+      "Flask",
+      "Express",
+      "NestJS",
+      "C#",
+      "ASP.NET",
+      "ASP.NET Core",
+      ".NET Framework",
+      "Java",
+      "JSP",
+      "PHP",
+      "Ruby/Rails",
+      "Go"
+    ]
+  },
+  {
+    "area": "Additional languages",
+    "technologies": [
+      "C",
+      "C++",
+      "Bash",
+      "Batch",
+      "Perl",
+      "R",
+      "Lisp",
+      "COBOL",
+      "Elixir",
+      "Rust",
+      "Solidity",
+      "Pascal",
+      "QuickBasic",
+      "Visual Basic",
+      "Assembly"
+    ]
+  },
+  {
+    "area": "Data & APIs",
+    "technologies": [
+      "SQL/T-SQL/I-SQL",
+      "SQL Server",
+      "PostgreSQL",
+      "MySQL/MariaDB",
+      "MongoDB",
+      "Cosmos DB",
+      "Valkey",
+      "GraphQL",
+      "ODBC",
+      "REST APIs"
+    ]
+  },
+  {
+    "area": "OS & cloud",
+    "technologies": [
+      "Linux",
+      "Ubuntu",
+      "Debian",
+      "Red Hat",
+      "Fedora",
+      "Unix",
+      "BSD",
+      "Windows/Windows Server",
+      "z/OS",
+      "Azure",
+      "AWS",
+      "GCP",
+      "OpenStack"
+    ]
+  },
+  {
+    "area": "Containers & observability",
+    "technologies": [
+      "Docker/Compose",
+      "Kubernetes/k3s",
+      "Portainer",
+      "Nomad",
+      "Zabbix",
+      "Grafana",
+      "Prometheus",
+      "Alertmanager",
+      "Loki",
+      "Promtail",
+      "Uptime Kuma",
+      "SNMP",
+      "NETCONF",
+      "ICMP"
+    ]
+  },
+  {
+    "area": "Infrastructure",
+    "technologies": [
+      "Nginx",
+      "Apache",
+      "PHP-FPM",
+      "systemd",
+      "OpenSSL",
+      "TLS",
+      "DNS",
+      "dnsmasq",
+      "SSH",
+      "Samba",
+      "Webmin",
+      "phpMyAdmin",
+      "Veeam",
+      "Acronis",
+      "Control-M"
+    ]
+  },
+  {
+    "area": "Delivery tooling",
+    "technologies": [
+      "Git/GitHub/GitHub Projects",
+      "npm/yarn/pnpm",
+      "pip/conda",
+      "Composer",
+      "Bundler",
+      "Maven",
+      "Gradle",
+      "Postman",
+      "CI/CD",
+      "Jira",
+      "Confluence",
+      "Scrum",
+      "Kanban",
+      "Agile"
+    ]
+  },
+  {
+    "area": "Leadership & domains",
+    "technologies": [
+      "Architecture",
+      "hiring",
+      "mentoring",
+      "delivery",
+      "writing",
+      "teaching",
+      "open source",
+      "banking",
+      "ecommerce",
+      "logistics",
+      "billing",
+      "batch operations"
+    ]
+  },
+  {
+    "area": "Monitored/integrated estate",
+    "technologies": [
+      "Cisco Meraki/Nexus/SD-WAN/Secure Firewall",
+      "Juniper",
+      "Palo Alto",
+      "Aruba",
+      "Ciena",
+      "Vyatta",
+      "Stormshield",
+      "Nutanix",
+      "Dell PowerEdge",
+      "Pure Storage",
+      "EMC Unity",
+      "Huawei OceanStor",
+      "Nvidia"
+    ]
+  }
+]

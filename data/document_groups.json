@@ -1,0 +1,342 @@
+[
+  {
+    "id": 1,
+    "name": "Technical Lead / Software Delivery Lead",
+    "slug": "cv-tech-lead-es",
+    "category": "cv",
+    "language": "es",
+    "body_text": null,
+    "sort_order": 10,
+    "description": null
+  },
+  {
+    "id": 2,
+    "name": "Engineering Manager / Head of Engineering",
+    "slug": "cv-em-es",
+    "category": "cv",
+    "language": "es",
+    "body_text": null,
+    "sort_order": 20,
+    "description": null
+  },
+  {
+    "id": 3,
+    "name": "Senior Full-stack Software Engineer",
+    "slug": "cv-fullstack-es",
+    "category": "cv",
+    "language": "es",
+    "body_text": null,
+    "sort_order": 30,
+    "description": null
+  },
+  {
+    "id": 4,
+    "name": "Platform / DevOps / Observability",
+    "slug": "cv-devops-es",
+    "category": "cv",
+    "language": "es",
+    "body_text": null,
+    "sort_order": 40,
+    "description": null
+  },
+  {
+    "id": 5,
+    "name": "Solutions / Implementation / TAM",
+    "slug": "cv-tam-es",
+    "category": "cv",
+    "language": "es",
+    "body_text": null,
+    "sort_order": 50,
+    "description": null
+  },
+  {
+    "id": 6,
+    "name": "IT Manager / App Support / Infra Lead",
+    "slug": "cv-it-manager-es",
+    "category": "cv",
+    "language": "es",
+    "body_text": null,
+    "sort_order": 60,
+    "description": null
+  },
+  {
+    "id": 7,
+    "name": "Technical Lead / Software Delivery Lead",
+    "slug": "cv-tech-lead-en",
+    "category": "cv",
+    "language": "en",
+    "body_text": null,
+    "sort_order": 110,
+    "description": null
+  },
+  {
+    "id": 8,
+    "name": "Engineering Manager / Head of Engineering",
+    "slug": "cv-em-en",
+    "category": "cv",
+    "language": "en",
+    "body_text": null,
+    "sort_order": 120,
+    "description": null
+  },
+  {
+    "id": 9,
+    "name": "Senior Full-stack Software Engineer",
+    "slug": "cv-fullstack-en",
+    "category": "cv",
+    "language": "en",
+    "body_text": null,
+    "sort_order": 130,
+    "description": null
+  },
+  {
+    "id": 10,
+    "name": "Platform / DevOps / Observability",
+    "slug": "cv-devops-en",
+    "category": "cv",
+    "language": "en",
+    "body_text": null,
+    "sort_order": 140,
+    "description": null
+  },
+  {
+    "id": 11,
+    "name": "Solutions / Implementation / TAM",
+    "slug": "cv-tam-en",
+    "category": "cv",
+    "language": "en",
+    "body_text": null,
+    "sort_order": 150,
+    "description": null
+  },
+  {
+    "id": 12,
+    "name": "IT Manager / App Support / Infra Lead",
+    "slug": "cv-it-manager-en",
+    "category": "cv",
+    "language": "en",
+    "body_text": null,
+    "sort_order": 160,
+    "description": null
+  },
+  {
+    "id": 13,
+    "name": "Carta de presentación (ES)",
+    "slug": "cover-es",
+    "category": "cover_letter",
+    "language": "es",
+    "body_text": "Estimado equipo,\n\nMe postulo a {ROL} en {EMPRESA}. Puedo aportar {EVIDENCIA} y un plan práctico de 90 días orientado a {NECESIDAD}.\n\nGracias,\nJuan Romano",
+    "sort_order": 200,
+    "description": null
+  },
+  {
+    "id": 14,
+    "name": "Cover letter (EN)",
+    "slug": "cover-en",
+    "category": "cover_letter",
+    "language": "en",
+    "body_text": "Dear Hiring Team,\n\nI am applying for the {ROLE} role at {COMPANY}. I can contribute {EVIDENCE} and a practical 90-day approach focused on {NEED}.\n\nThank you for your consideration,\nJuan Romano",
+    "sort_order": 210,
+    "description": null
+  },
+  {
+    "id": 15,
+    "name": "Hechos de carrera / Summary (ES)",
+    "slug": "summary-facts-es",
+    "category": "summary",
+    "language": "es",
+    "body_text": "HECHOS DE CARRERA (fuente de verdad)\n\nNombre:\nUbicación / modalidad:\nDisponibilidad:\n\nEmpleadores (nombre, título, fechas, alcance, tamaño de equipo, tecnologías, resultados):\n-\n\nProyectos públicos / portfolio:\n-\n\nMétricas verificables:\n-\n\nClaims a verificar / no publicar:\n-",
+    "sort_order": 300,
+    "description": null
+  },
+  {
+    "id": 16,
+    "name": "Career Facts / Summary (EN)",
+    "slug": "summary-facts-en",
+    "category": "summary",
+    "language": "en",
+    "body_text": "CAREER FACTS (source of truth)\n\nName:\nLocation / work mode:\nAvailability:\n\nEmployers (name, title, dates, scope, team size, technologies, outcomes):\n-\n\nPublic projects / portfolio:\n-\n\nVerifiable metrics:\n-\n\nClaims to verify / do not publish:\n-",
+    "sort_order": 305,
+    "description": null
+  },
+  {
+    "id": 17,
+    "name": "Banco de logros (ES)",
+    "slug": "summary-achievements-es",
+    "category": "summary",
+    "language": "es",
+    "body_text": "BANCO DE LOGROS\nFormato: acción + contexto + resultado + evidencia\n\n1)\n2)\n3)\n4)\n5)\n\nUsar solo hechos aprobados en Hechos de carrera.",
+    "sort_order": 310,
+    "description": null
+  },
+  {
+    "id": 18,
+    "name": "Achievement bank (EN)",
+    "slug": "summary-achievements-en",
+    "category": "summary",
+    "language": "en",
+    "body_text": "ACHIEVEMENT BANK\nFormat: action + context + result + evidence\n\n1)\n2)\n3)\n4)\n5)\n\nUse only facts approved in Career Facts.",
+    "sort_order": 315,
+    "description": null
+  },
+  {
+    "id": 19,
+    "name": "Mensaje reclutador (ES)",
+    "slug": "msg-recruiter-es",
+    "category": "message",
+    "language": "es",
+    "body_text": "Hola {NOMBRE},\n\nVi la búsqueda de {ROL} en {EMPRESA} y creo que hay buen fit por {EVIDENCIA}.\nEstoy abierto/a a una conversación breve esta semana.\n\nSaludos,\nJuan Romano",
+    "sort_order": 400,
+    "description": null
+  },
+  {
+    "id": 20,
+    "name": "Recruiter message (EN)",
+    "slug": "msg-recruiter-en",
+    "category": "message",
+    "language": "en",
+    "body_text": "Hi {NAME},\n\nI saw the {ROLE} opening at {COMPANY}. Based on {EVIDENCE}, I may be a strong fit.\nOpen to a short conversation this week.\n\nBest,\nJuan Romano",
+    "sort_order": 410,
+    "description": null
+  },
+  {
+    "id": 21,
+    "name": "Mensaje CTO/CEO (ES)",
+    "slug": "msg-cto-es",
+    "category": "message",
+    "language": "es",
+    "body_text": "Hola {NOMBRE},\n\nSoy Juan Romano (technical lead / engineering management). Vi {NECESIDAD} en {EMPRESA} y puedo aportar {EVIDENCIA}.\n¿Tenés 15 minutos para validar si tiene sentido?\n\nGracias",
+    "sort_order": 420,
+    "description": null
+  },
+  {
+    "id": 22,
+    "name": "CTO/CEO message (EN)",
+    "slug": "msg-cto-en",
+    "category": "message",
+    "language": "en",
+    "body_text": "Hi {NAME},\n\nI'm Juan Romano (technical leadership + hands-on delivery). I noticed {NEED} at {COMPANY} and can bring {EVIDENCE}.\nWould a 15-minute chat be useful?\n\nThanks",
+    "sort_order": 430,
+    "description": null
+  },
+  {
+    "id": 23,
+    "name": "Mensaje hiring manager (ES)",
+    "slug": "msg-hm-es",
+    "category": "message",
+    "language": "es",
+    "body_text": "Hola {NOMBRE},\n\nMe postulo a {ROL}. Evidencia relevante: {EVIDENCIA}. Puedo compartir un enfoque concreto de 90 días.\n\nJuan Romano",
+    "sort_order": 440,
+    "description": null
+  },
+  {
+    "id": 24,
+    "name": "Hiring manager message (EN)",
+    "slug": "msg-hm-en",
+    "category": "message",
+    "language": "en",
+    "body_text": "Hi {NAME},\n\nApplying for {ROLE}. Relevant proof: {EVIDENCE}. Happy to walk through a concrete 90-day approach.\n\nJuan Romano",
+    "sort_order": 450,
+    "description": null
+  },
+  {
+    "id": 25,
+    "name": "Pedido de referral (ES)",
+    "slug": "msg-referral-es",
+    "category": "message",
+    "language": "es",
+    "body_text": "Hola {NOMBRE},\n\nEspero que estés bien. Estoy explorando roles de {ROLE_FAMILY} y vi {EMPRESA}/{ROL}.\n¿Podrías referirme o presentarme al hiring manager?\n\nGracias",
+    "sort_order": 460,
+    "description": null
+  },
+  {
+    "id": 26,
+    "name": "Referral ask (EN)",
+    "slug": "msg-referral-en",
+    "category": "message",
+    "language": "en",
+    "body_text": "Hi {NAME},\n\nHope you're well. I'm exploring {ROLE_FAMILY} roles and saw {COMPANY}/{ROLE}.\nWould you be open to a referral or intro to the hiring manager?\n\nThanks",
+    "sort_order": 470,
+    "description": null
+  },
+  {
+    "id": 27,
+    "name": "Follow-up 1 (ES)",
+    "slug": "msg-followup-1-es",
+    "category": "message",
+    "language": "es",
+    "body_text": "Hola {NOMBRE},\n\nTe escribo por mi postulación a {ROL} ({FECHA}). Puedo compartir un case study corto o aclarar fit.\n\nJuan",
+    "sort_order": 480,
+    "description": null
+  },
+  {
+    "id": 28,
+    "name": "Follow-up 1 (EN)",
+    "slug": "msg-followup-1-en",
+    "category": "message",
+    "language": "en",
+    "body_text": "Hi {NAME},\n\nFollowing up on my application for {ROLE} ({DATE}). Happy to share a short case study or clarify fit.\n\nJuan",
+    "sort_order": 490,
+    "description": null
+  },
+  {
+    "id": 29,
+    "name": "Follow-up 2 (ES)",
+    "slug": "msg-followup-2-es",
+    "category": "message",
+    "language": "es",
+    "body_text": "Hola {NOMBRE},\n\nSegundo follow-up sobre {ROL}. Sigo interesado; puedo adaptar disponibilidad a su proceso.\n\nJuan",
+    "sort_order": 500,
+    "description": null
+  },
+  {
+    "id": 30,
+    "name": "Follow-up 2 (EN)",
+    "slug": "msg-followup-2-en",
+    "category": "message",
+    "language": "en",
+    "body_text": "Hi {NAME},\n\nQuick second follow-up on {ROLE}. Still interested; I can adapt availability around your process.\n\nJuan",
+    "sort_order": 510,
+    "description": null
+  },
+  {
+    "id": 31,
+    "name": "Agradecimiento (ES)",
+    "slug": "msg-thankyou-es",
+    "category": "message",
+    "language": "es",
+    "body_text": "Hola {NOMBRE},\n\nGracias por la conversación sobre {ROL}. Valoro especialmente {PUNTO}.\nPuedo enviar cualquier material de seguimiento.\n\nJuan Romano",
+    "sort_order": 520,
+    "description": null
+  },
+  {
+    "id": 32,
+    "name": "Thank-you note (EN)",
+    "slug": "msg-thankyou-en",
+    "category": "message",
+    "language": "en",
+    "body_text": "Hi {NAME},\n\nThank you for the conversation about {ROLE}. I especially valued {POINT}.\nHappy to send any follow-up materials.\n\nJuan Romano",
+    "sort_order": 530,
+    "description": null
+  },
+  {
+    "id": 33,
+    "name": "Script salarial (ES)",
+    "slug": "msg-salary-es",
+    "category": "message",
+    "language": "es",
+    "body_text": "Gracias por la pregunta. ¿Qué rango de compensación está aprobado para este rol?\nSegún el alcance y el paquete total, estoy apuntando a {RANGO}, con flexibilidad según responsabilidades y términos.",
+    "sort_order": 540,
+    "description": null
+  },
+  {
+    "id": 34,
+    "name": "Salary script (EN)",
+    "slug": "msg-salary-en",
+    "category": "message",
+    "language": "en",
+    "body_text": "Thanks for asking. What compensation range is approved for this role?\nBased on scope and total package, I'm targeting {RANGE}, with flexibility for responsibilities and terms.",
+    "sort_order": 550,
+    "description": null
+  }
+]

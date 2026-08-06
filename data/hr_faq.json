@@ -1,0 +1,302 @@
+[
+  {
+    "id": 1,
+    "category": "Presentación",
+    "question": "Contame sobre vos.",
+    "answer": "Soy un líder técnico hands-on: combino delivery, arquitectura y gente. Trabajé en entornos de escala, priorizo claridad sobre complejidad y mido el impacto en resultados de negocio, no solo en tickets. Me interesa roles donde pueda aportar dirección técnica y ejecución concreta en los primeros 90 días."
+  },
+  {
+    "id": 2,
+    "category": "Presentación",
+    "question": "¿Por qué estás buscando un cambio?",
+    "answer": "Quiero un entorno donde el alcance técnico y de liderazgo crezcan juntos. Busco un equipo con problemas reales de escala o producto, donde mis decisiones impacten en delivery y calidad. No salgo por conflicto: salgo por proyección y mejor fit con el próximo desafío."
+  },
+  {
+    "id": 3,
+    "category": "Presentación",
+    "question": "¿Cuáles son tus fortalezas?",
+    "answer": "Tres: 1) traducir ambigüedad en un plan ejecutable; 2) equilibrar velocidad y calidad sin drama; 3) comunicar trade-offs a negocio y a ingeniería con el mismo lenguaje. En la práctica eso se ve en roadmaps realistas, incidentes bien cerrados y equipos que mejoran el throughput sin quemarse."
+  },
+  {
+    "id": 4,
+    "category": "Presentación",
+    "question": "¿Cuál es tu mayor debilidad?",
+    "answer": "A veces quiero resolver demasiado yo cuando veo riesgo en el camino crítico. Lo corrijo delegando con criterios claros, haciendo pairing temprano y midiendo si el equipo puede operar sin mí. Prefiero enseñar el estándar antes que convertirme en cuello de botella."
+  },
+  {
+    "id": 5,
+    "category": "Motivación",
+    "question": "¿Por qué querés trabajar con nosotros?",
+    "answer": "Por el problema que resuelven y cómo lo resuelven. Vi [producto/mercado], me interesa [desafío concreto: escala, plataforma, calidad, time-to-market] y creo que mi experiencia en [evidencia] encaja. Me preparé mirando el rol, no solo la marca: quiero aportar valor medible en 90 días."
+  },
+  {
+    "id": 6,
+    "category": "Motivación",
+    "question": "¿Qué te motiva en el día a día?",
+    "answer": "Ver un problema difuso convertirse en un sistema simple que el equipo entiende y opera. Me motiva destrabar delivery, bajar incidentes y que la gente crezca. El reconocimiento importa menos que el impacto sostenido."
+  },
+  {
+    "id": 7,
+    "category": "Motivación",
+    "question": "¿Dónde te ves en 3–5 años?",
+    "answer": "Liderando con más alcance: más ownership de plataforma o producto, mejores sistemas de decisión y un equipo más autónomo. No busco títulos vacíos: busco responsabilidad sobre outcomes. En el corto plazo quiero demostrar fit y resultados; el resto se discute con evidencia."
+  },
+  {
+    "id": 8,
+    "category": "Experiencia",
+    "question": "Contame un logro del que estés orgulloso.",
+    "answer": "Elegí un caso con métrica: contexto → acción → resultado. Ejemplo: reduzimos lead time / incidentes / costo operativo en X% cambiando proceso + arquitectura + ownership. El punto no es la heroica individual, sino el sistema que quedó funcionando después."
+  },
+  {
+    "id": 9,
+    "category": "Experiencia",
+    "question": "Contame un fracaso y qué aprendiste.",
+    "answer": "Usá STAR honesto. Ejemplo: subestimé dependencias externas y retrasamos un release. Aprendí a explicitar riesgos temprano, a cortar scope y a poner gates de validación. Desde entonces documenté supuestos y pedí señales de alerta semanales. El error importó menos que el cambio de hábito."
+  },
+  {
+    "id": 10,
+    "category": "Experiencia",
+    "question": "¿Cómo priorizás cuando todo es urgente?",
+    "answer": "Separó impacto, urgencia y riesgo. Pregunto: ¿qué duele al usuario/negocio hoy? ¿qué se vuelve irreversible? Luego corto scope, secuencio entregas y comunico el trade-off. Prefiero un MVP seguro a tres frentes a medias. Dejo por escrito el criterio para que el equipo no dependa de mi intuición."
+  },
+  {
+    "id": 11,
+    "category": "Liderazgo",
+    "question": "¿Cómo es tu estilo de liderazgo?",
+    "answer": "Claridad + autonomía con accountability. Defino el outcome, los límites (calidad, seguridad, SLA) y dejo espacio para el cómo. Estoy cerca en el camino crítico y lejos cuando el equipo ya tiene músculo. Feedback frecuente, sin sorpresas en la evaluación."
+  },
+  {
+    "id": 12,
+    "category": "Liderazgo",
+    "question": "¿Cómo manejás un underperformer?",
+    "answer": "Primero datos y ejemplos concretos, no sensaciones. Alineo expectativas, plan de mejora con hitos cortos y soporte real (pairing, mentoring, foco). Si no hay progreso, escalo con transparencia y respeto. Proteger al equipo también es no normalizar bajo rendimiento indefinido."
+  },
+  {
+    "id": 13,
+    "category": "Liderazgo",
+    "question": "¿Cómo contratás o evaluás talento técnico?",
+    "answer": "Busco señal de juicio, no trivia. Miro: claridad de pensamiento, trade-offs, ownership y cómo colabora. Diseño entrevistas con un problema real acotado + preguntas de sistemas + referencia de comportamiento. Después del hire, onboarding con outcome de 30/60/90."
+  },
+  {
+    "id": 14,
+    "category": "Liderazgo",
+    "question": "¿Cómo das feedback difícil?",
+    "answer": "Privado, específico, cercano al evento y orientado a conducta observable. Separó persona de impacto. Propongo alternativa concreta y acuerdo de seguimiento. Evito feedback sandwich vacío: si hay un problema, se nombra con respeto y se cierra con un próximo paso."
+  },
+  {
+    "id": 15,
+    "category": "Equipo",
+    "question": "Contame un conflicto en el equipo y cómo lo resolviste.",
+    "answer": "Describí el desacuerdo (tech vs negocio, ownership, prioridades), qué escuchaste de cada lado, qué criterio usaste y qué quedó acordado. Ej.: alineamos con métricas de usuario y un spike acotado. El objetivo no es “ganar”, es destrabar con evidencia y dejar reglas claras."
+  },
+  {
+    "id": 16,
+    "category": "Equipo",
+    "question": "¿Cómo trabajás con stakeholders no técnicos?",
+    "answer": "Hablo en impacto, riesgo y tiempo. Traduzco opciones a escenarios: rápido/frágil vs más lento/robusto. Uso demos cortas y métricas simples. Nunca prometo fechas sin buffer de incertidumbre; sí comprometo un plan con checkpoints."
+  },
+  {
+    "id": 17,
+    "category": "Equipo",
+    "question": "¿Preferís trabajar solo o en equipo?",
+    "answer": "Ambos, según la fase. Exploración profunda a veces necesita foco individual; delivery sostenido necesita equipo. Mi default es colaborar temprano para evitar rework. Valoro ownership individual dentro de un sistema compartido."
+  },
+  {
+    "id": 18,
+    "category": "Técnica / delivery",
+    "question": "¿Cómo garantizás calidad sin frenar el delivery?",
+    "answer": "Calidad embebida: definición de done clara, tests en el camino crítico, revisiones enfocadas en riesgo, observabilidad desde el día 1. Automatizo lo repetible. Prefiero feature flags y rollouts graduales a “big bang”. La velocidad real es la que no genera retrabajo."
+  },
+  {
+    "id": 19,
+    "category": "Técnica / delivery",
+    "question": "¿Cómo manejás una producción inestable?",
+    "answer": "Primero estabilizar: SEV claro, owner, comunicación, mitigación. Después causa raíz con datos (logs, métricas, cambios recientes). Luego acciones: fix, guardrails, postmortem sin culpa. Si hace falta, freno features hasta recuperar SLO. Confiabilidad es feature."
+  },
+  {
+    "id": 20,
+    "category": "Técnica / delivery",
+    "question": "¿Cómo encarás una deuda técnica grande?",
+    "answer": "La cuantifico en dolor: incidentes, lead time, costo de cambio. Priorizo la deuda que bloquea outcomes. La pago en cuotas atadas a features (“boy scout”) o en un track explícito con métrica de éxito. Evito rewrites heroicos sin frontera."
+  },
+  {
+    "id": 21,
+    "category": "Técnica / delivery",
+    "question": "Describí una decisión de arquitectura difícil.",
+    "answer": "Contexto, opciones, trade-offs, decisión y resultado. Ej.: monolito modular vs microservicios — elegimos X por equipo chico, dominio aún inestable y costo operativo. Revisamos la decisión cuando cambió la escala. Arquitectura buena es la que se puede revertir o evolucionar."
+  },
+  {
+    "id": 22,
+    "category": "Técnica / delivery",
+    "question": "¿Cómo estimás y cumplís fechas?",
+    "answer": "Estimo por rangos y riesgo, no por deseo. Descompongo, identifico dependencias, uso histórico del equipo y separo compromiso de forecast. Comunico incertidumbre. Si el plazo es fijo, corto scope. Prefiero entregar valor parcial a fallar en silencio."
+  },
+  {
+    "id": 23,
+    "category": "Remoto / hábitos",
+    "question": "¿Cómo te organizás trabajando remoto o híbrido?",
+    "answer": "Rutina visible: bloqueos de foco, async claro, updates cortos, documentación donde vive la decisión. Over-communicate en lo crítico y no en el ruido. Cuido husos y overlapping para decisiones. Mido output por resultados, no por presencia."
+  },
+  {
+    "id": 24,
+    "category": "Remoto / hábitos",
+    "question": "¿Cómo manejás la sobrecarga o el burnout?",
+    "answer": "Separo urgencias reales de ansiedad colectiva. Recorto WIP, renegocio prioridades y protejo sueño/descanso como parte del sistema. En el equipo miro señales tempranas (horas extra crónicas, calidad bajando) y actúo antes del colapso. Sostenibilidad es parte del delivery."
+  },
+  {
+    "id": 25,
+    "category": "Cultura",
+    "question": "¿Qué tipo de cultura de equipo buscás?",
+    "answer": "Alta confianza, bajo ego: debate fuerte de ideas, respeto a las personas. Feedback directo, ownership, y aprendizaje público de errores. Celebramos outcomes, no teatro de ocupación. Quiero un lugar donde preguntar “por qué” sea bienvenido."
+  },
+  {
+    "id": 26,
+    "category": "Cultura",
+    "question": "¿Cómo te adaptás a un cambio de dirección de producto?",
+    "answer": "Primero entiendo el nuevo “por qué”. Después rearmo el plan: qué se pausa, qué se salva, qué se comunica al equipo. Evito cinismo: los pivots pasan. Mi rol es absorber incertidumbre y devolver claridad operativa rápido."
+  },
+  {
+    "id": 27,
+    "category": "Comportamental",
+    "question": "Contame una vez que influiste sin autoridad formal.",
+    "answer": "Usá un caso donde convenciste con datos, prototipo o aliados. Ejemplo: propuse un cambio de proceso con métrica piloto; conseguí buy-in mostrando reducción de rework. Influencia = empatía + evidencia + reducir el riesgo percibido del otro."
+  },
+  {
+    "id": 28,
+    "category": "Comportamental",
+    "question": "¿Cómo reaccionás ante presión o un deadline imposible?",
+    "answer": "Calmo el canal, separo hechos de ruido y armo opciones: cortar scope, paralelizar, pedir ayuda, o decir no con costo explícito. No prometo magia. La presión se maneja con transparencia temprana, no con heroísmo de última hora."
+  },
+  {
+    "id": 29,
+    "category": "Comportamental",
+    "question": "Dame un ejemplo de ownership extremo.",
+    "answer": "Un caso donde tomaste el problema de punta a punta aunque “no era tuyo”: detectaste, mitigaste, comunicaste, arreglaste y dejaste prevención. Ownership no es acumular tareas: es responsabilizarte del outcome hasta que el sistema quede mejor."
+  },
+  {
+    "id": 30,
+    "category": "Comportamental",
+    "question": "¿Cómo aprendés tecnologías nuevas?",
+    "answer": "Arranco por el problema, no por el hype. Hago un spike acotado, leo docs oficiales, rompo un ejemplo mínimo y lo conecto a un caso real del trabajo. Documento lo aprendido. Prefiero profundidad usable a checklist de buzzwords."
+  },
+  {
+    "id": 31,
+    "category": "Salario",
+    "question": "¿Cuáles son tus expectativas salariales?",
+    "answer": "Primero preguntá el rango aprobado del rol. Si insiste: “Apunto a un paquete competitivo según alcance, modalidad y mercado; mi base de referencia es [rango]. Tengo flexibilidad según responsabilidades, beneficios y moneda.” No tires el mínimo primero."
+  },
+  {
+    "id": 32,
+    "category": "Salario",
+    "question": "¿Estarías dispuesto a bajar tu expectativa?",
+    "answer": "Depende del paquete total: equity, bonus, benefits, crecimiento, estabilidad de moneda y alcance real. Puedo ajustar si el rol ofrece upside claro. No bajo solo por ansiedad de cerrar."
+  },
+  {
+    "id": 33,
+    "category": "Disponibilidad",
+    "question": "¿Cuándo podrías empezar?",
+    "answer": "Puedo coordinar una transición profesional. Típicamente [X semanas] para cerrar handoff con respeto al empleador actual. Si el rol es urgente, evaluamos un plan de onboarding parcial, pero no corto procesos de forma irresponsable."
+  },
+  {
+    "id": 34,
+    "category": "Disponibilidad",
+    "question": "¿Tenés restricciones de horario o huso?",
+    "answer": "Trabajo bien con overlapping claro para meetings críticos y foco async el resto. Soy transparente con disponibilidad y on-call. Si el rol exige guardias, quiero entender rotación, compensación y expectativa real antes de comprometer."
+  },
+  {
+    "id": 35,
+    "category": "Rol",
+    "question": "¿Preferís IC senior o management?",
+    "answer": "Puedo operar en ambos ejes según necesidad. Me gusta el leadership hands-on: decisiones técnicas + desarrollo de gente. Si el rol es EM, lidero con contexto técnico; si es Tech Lead, empujo delivery y estándares sin abandonar mentoring."
+  },
+  {
+    "id": 36,
+    "category": "Rol",
+    "question": "¿Qué harías en tus primeros 30/60/90 días?",
+    "answer": "30: escuchar, mapear sistema, riesgos y stakeholders; un win chico. 60: plan de mejoras priorizado + métricas. 90: entregar impacto visible (confiabilidad, throughput o un outcome de producto) y dejar rituales sostenibles. Llego a aprender rápido, no a imponer el día 1."
+  },
+  {
+    "id": 37,
+    "category": "Rol",
+    "question": "¿Qué preguntas tenés para nosotros?",
+    "answer": "Prepará 3–5: ¿cuál es el problema más doloroso del equipo hoy? ¿Cómo se mide el éxito a 6 meses? ¿Cómo toman decisiones tech vs producto? ¿Cómo es on-call y deuda técnica? ¿Por qué está abierto el rol? Buenas preguntas demuestran criterio."
+  },
+  {
+    "id": 38,
+    "category": "Ética",
+    "question": "¿Qué harías si te pidieran algo que considerás incorrecto?",
+    "answer": "Primero aclaro si es malentendido o presión real. Explico el riesgo (legal, seguridad, reputación, usuarios). Propongo alternativa viable. Si insiste en algo antiético o ilegal, no lo hago y escalo por el canal correcto. Integridad no es negociable."
+  },
+  {
+    "id": 39,
+    "category": "Ética",
+    "question": "¿Cómo manejás información confidencial?",
+    "answer": "Need-to-know, sin reutilizar IP ni datos de un empleador en otro. Anonimizo ejemplos públicos. No subo secretos a tools personales. En entrevistas hablo de patrones y resultados, no de detalles propietarios."
+  },
+  {
+    "id": 40,
+    "category": "Producto",
+    "question": "¿Cómo balanceás pedidos de producto vs estabilidad?",
+    "answer": "Con un presupuesto explícito de capacidad: features + KTLO + deuda. Si el error budget se quema, features ceden. Negocio entiende mejor un “no temporal con fecha” que un sí que termina en incidente. Muestro el costo de no invertir en estabilidad."
+  },
+  {
+    "id": 41,
+    "category": "Producto",
+    "question": "Contame cómo validás si una feature valió la pena.",
+    "answer": "Defino métrica de éxito antes de codear. Mido adopción, retención o eficiencia — no vanity. Si falla, aprendo y apago o itero. Evito construir monumento: construyo experimento con salida."
+  },
+  {
+    "id": 42,
+    "category": "Gestión del tiempo",
+    "question": "¿Cómo priorizás tu propia agenda?",
+    "answer": "Bloqueo foco para trabajo profundo, agrupo meetings, y dejo slots para interrupciones reales. Reviso WIP diario. Si algo no mueve el outcome de la semana, lo bajo o delego. Mi calendario sigue a las prioridades, no al revés."
+  },
+  {
+    "id": 43,
+    "category": "Gestión del tiempo",
+    "question": "¿Cómo evitás el micromanagement?",
+    "answer": "Acuerdo outcomes, cadencia de update y definición de done. Interveno cuando hay riesgo o pedido de ayuda. Si reviso demasiado, es señal de que faltan estándares o clarity — arreglo el sistema, no a la persona."
+  },
+  {
+    "id": 44,
+    "category": "Cambio de carrera",
+    "question": "¿Por qué este tipo de rol y no otro?",
+    "answer": "Porque une lo que mejor hago: juicio técnico, delivery y liderazgo. En roles puramente administrativos me falta el craft; en roles solo de código me falta el apalancamiento. Este rol maximiza impacto con mi perfil."
+  },
+  {
+    "id": 45,
+    "category": "Cambio de carrera",
+    "question": "Tenés gaps respecto al JD. ¿Cómo los compensás?",
+    "answer": "Soy honesto: nombro el gap, muestro adyacencias y un plan de ramp-up de 30–60 días. Prefiero overpromise cero. Lo que no sé lo aprendo rápido con spike + mentoría + ownership temprano en un área acotada."
+  },
+  {
+    "id": 46,
+    "category": "Cierre",
+    "question": "¿Por qué deberíamos contratarte a vos?",
+    "answer": "Porque reduzco incertidumbre rápido: diagnostico, priorizo y entrego. Traigo estándares sin burocracia y evidencia de haber operado en [contexto similar]. En 90 días van a ver un sistema más claro y un equipo más autónomo, no solo slides."
+  },
+  {
+    "id": 47,
+    "category": "Cierre",
+    "question": "¿Hay algo que no te preguntamos y deberíamos saber?",
+    "answer": "Usalo para un diferencial concreto: un caso, una restricción honesta o una motivación específica por el rol. Corto y memorable. Ejemplo: “También aporto mucho en incidentes y postmortems; es parte de cómo construyo confianza con el equipo.”"
+  },
+  {
+    "id": 48,
+    "category": "Situacional",
+    "question": "Dos líderes te piden cosas contradictorias. ¿Qué hacés?",
+    "answer": "Hago explícita la contradicción con impacto. Propongo opciones y pido una decisión única del owner del outcome. Mientras tanto protejo al equipo de tironeo. Documentó el acuerdo. Escalamiento temprano evita thrash."
+  },
+  {
+    "id": 49,
+    "category": "Situacional",
+    "question": "Un release crítico falla en producción el viernes. ¿Qué hacés?",
+    "answer": "Activo protocolo: severidad, owner, canal, rollback/mitigación, comunicación a stakeholders. No busco culpables en caliente. Cuando estabiliza, postmortem y acciones. Si hace falta, cancelo releases del finde. Usuarios primero."
+  },
+  {
+    "id": 50,
+    "category": "Situacional",
+    "question": "El equipo está desmotivado después de un pivot. ¿Cómo lo rearmás?",
+    "answer": "Escucho, valido la frustración y conecto el nuevo norte con wins cercanos. Recorto ruido, celebro progreso chico y rehago rituales útiles. Transparencia del “por qué” + agency del equipo suele recuperar energía más que un speech motivacional."
+  }
+]

@@ -80,7 +80,7 @@
   const siteNav = document.getElementById("siteNav");
 
   function setNavOpen(open) {
-    document.body.classList.toggle("nav-open", open);
+    document.body.classList.toggle("nav-open", !!open);
     if (navToggle) {
       navToggle.setAttribute("aria-expanded", open ? "true" : "false");
       navToggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
@@ -100,18 +100,19 @@
 
   if (navToggle) {
     navToggle.addEventListener("click", function (e) {
+      e.preventDefault();
       e.stopPropagation();
       setNavOpen(!document.body.classList.contains("nav-open"));
     });
   }
   if (navBackdrop) {
-    navBackdrop.addEventListener("click", function () {
+    navBackdrop.addEventListener("click", function (e) {
+      e.preventDefault();
       setNavOpen(false);
     });
   }
   if (siteNav) {
     siteNav.addEventListener("click", function (e) {
-      e.stopPropagation();
       const link = e.target.closest("a");
       if (link) setNavOpen(false);
     });

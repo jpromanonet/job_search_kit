@@ -39,40 +39,42 @@ $faqActive = array_key_exists($activeTab, $faqTabs);
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">
-      <a href="<?= e(url('/index.php?tab=plan')) ?>"><?= e($appName) ?></a>
-    </div>
-    <button type="button"
-            class="nav-toggle"
-            id="navToggle"
-            aria-controls="siteNav"
-            aria-expanded="false"
-            aria-label="Abrir menú">
-      <span class="nav-toggle-bars" aria-hidden="true"></span>
-    </button>
-    <div class="nav-backdrop" id="navBackdrop" hidden></div>
-    <nav class="nav" id="siteNav">
-      <?php foreach ($tabs as $key => $label): ?>
-        <?php if ($key === 'tecnologias'): ?>
-          <div class="nav-dropdown<?= $faqActive ? ' is-active' : '' ?>">
-            <button type="button" class="nav-dropdown-toggle<?= $faqActive ? ' is-active' : '' ?>" aria-expanded="false" aria-haspopup="true">
-              FAQ
-              <span class="nav-caret" aria-hidden="true"></span>
-            </button>
-            <div class="nav-dropdown-menu" role="menu">
-              <?php foreach ($faqTabs as $faqKey => $faqLabel): ?>
-                <a role="menuitem"
-                   class="<?= $activeTab === $faqKey ? 'is-active' : '' ?>"
-                   href="<?= e(url('/index.php?tab=' . $faqKey)) ?>"><?= e($faqLabel) ?></a>
-              <?php endforeach; ?>
+    <div class="topbar-inner">
+      <div class="brand">
+        <a href="<?= e(url('/index.php?tab=plan')) ?>"><?= e($appName) ?></a>
+      </div>
+      <nav class="nav" id="siteNav">
+        <?php foreach ($tabs as $key => $label): ?>
+          <?php if ($key === 'tecnologias'): ?>
+            <div class="nav-dropdown<?= $faqActive ? ' is-active' : '' ?>">
+              <button type="button" class="nav-dropdown-toggle<?= $faqActive ? ' is-active' : '' ?>" aria-expanded="false" aria-haspopup="true">
+                FAQ
+                <span class="nav-caret" aria-hidden="true"></span>
+              </button>
+              <div class="nav-dropdown-menu" role="menu">
+                <?php foreach ($faqTabs as $faqKey => $faqLabel): ?>
+                  <a role="menuitem"
+                     class="<?= $activeTab === $faqKey ? 'is-active' : '' ?>"
+                     href="<?= e(url('/index.php?tab=' . $faqKey)) ?>"><?= e($faqLabel) ?></a>
+                <?php endforeach; ?>
+              </div>
             </div>
-          </div>
-        <?php endif; ?>
-        <a class="<?= $activeTab === $key ? 'is-active' : '' ?>"
-           href="<?= e(url('/index.php?tab=' . $key)) ?>"><?= e($label) ?></a>
-      <?php endforeach; ?>
-    </nav>
+          <?php endif; ?>
+          <a class="<?= $activeTab === $key ? 'is-active' : '' ?>"
+             href="<?= e(url('/index.php?tab=' . $key)) ?>"><?= e($label) ?></a>
+        <?php endforeach; ?>
+      </nav>
+      <button type="button"
+              class="nav-toggle"
+              id="navToggle"
+              aria-controls="siteNav"
+              aria-expanded="false"
+              aria-label="Abrir menú">
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+      </button>
+    </div>
   </header>
+  <div class="nav-backdrop" id="navBackdrop" hidden></div>
 
   <main class="shell">
     <?php if ($flash): ?>

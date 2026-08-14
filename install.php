@@ -222,38 +222,13 @@ function seed_document_groups(PDO $pdo): void
         'msg-thankyou-en' => "Hi {NAME},\n\nThank you for the conversation about {ROLE}. I especially valued {POINT}.\nHappy to send any follow-up materials.\n\nJuan Romano",
         'msg-salary-es' => "Gracias por la pregunta. ¿Qué rango de compensación está aprobado para este rol?\nSegún el alcance y el paquete total, estoy apuntando a {RANGO}, con flexibilidad según responsabilidades y términos.",
         'msg-salary-en' => "Thanks for asking. What compensation range is approved for this role?\nBased on scope and total package, I'm targeting {RANGE}, with flexibility for responsibilities and terms.",
-        'summary-facts-es' => "HECHOS DE CARRERA (fuente de verdad)\n\nNombre:\nUbicación / modalidad:\nDisponibilidad:\n\nEmpleadores (nombre, título, fechas, alcance, tamaño de equipo, tecnologías, resultados):\n-\n\nProyectos públicos / portfolio:\n-\n\nMétricas verificables:\n-\n\nClaims a verificar / no publicar:\n-",
-        'summary-facts-en' => "CAREER FACTS (source of truth)\n\nName:\nLocation / work mode:\nAvailability:\n\nEmployers (name, title, dates, scope, team size, technologies, outcomes):\n-\n\nPublic projects / portfolio:\n-\n\nVerifiable metrics:\n-\n\nClaims to verify / do not publish:\n-",
-        'summary-achievements-es' => "BANCO DE LOGROS\nFormato: acción + contexto + resultado + evidencia\n\n1)\n2)\n3)\n4)\n5)\n\nUsar solo hechos aprobados en Hechos de carrera.",
-        'summary-achievements-en' => "ACHIEVEMENT BANK\nFormat: action + context + result + evidence\n\n1)\n2)\n3)\n4)\n5)\n\nUse only facts approved in Career Facts.",
     ];
 
     $groups = [
-        // Master CVs first
         ['CV maestro (ES)', 'cv-master-es', 'cv', 'es', 1],
         ['Master CV (EN)', 'cv-master-en', 'cv', 'en', 2],
-        // CVs ES
-        ['Technical Lead / Software Delivery Lead', 'cv-tech-lead-es', 'cv', 'es', 10],
-        ['Engineering Manager / Head of Engineering', 'cv-em-es', 'cv', 'es', 20],
-        ['Senior Full-stack Software Engineer', 'cv-fullstack-es', 'cv', 'es', 30],
-        ['Platform / DevOps / Observability', 'cv-devops-es', 'cv', 'es', 40],
-        ['Solutions / Implementation / TAM', 'cv-tam-es', 'cv', 'es', 50],
-        ['IT Manager / App Support / Infra Lead', 'cv-it-manager-es', 'cv', 'es', 60],
-        // CVs EN
-        ['Technical Lead / Software Delivery Lead', 'cv-tech-lead-en', 'cv', 'en', 110],
-        ['Engineering Manager / Head of Engineering', 'cv-em-en', 'cv', 'en', 120],
-        ['Senior Full-stack Software Engineer', 'cv-fullstack-en', 'cv', 'en', 130],
-        ['Platform / DevOps / Observability', 'cv-devops-en', 'cv', 'en', 140],
-        ['Solutions / Implementation / TAM', 'cv-tam-en', 'cv', 'en', 150],
-        ['IT Manager / App Support / Infra Lead', 'cv-it-manager-en', 'cv', 'en', 160],
-        // Covers
         ['Carta de presentación (ES)', 'cover-es', 'cover_letter', 'es', 200],
         ['Cover letter (EN)', 'cover-en', 'cover_letter', 'en', 210],
-        // Summaries bilingual
-        ['Hechos de carrera / Summary (ES)', 'summary-facts-es', 'summary', 'es', 300],
-        ['Career Facts / Summary (EN)', 'summary-facts-en', 'summary', 'en', 305],
-        ['Banco de logros (ES)', 'summary-achievements-es', 'summary', 'es', 310],
-        ['Achievement bank (EN)', 'summary-achievements-en', 'summary', 'en', 315],
         // Messages bilingual
         ['Mensaje reclutador (ES)', 'msg-recruiter-es', 'message', 'es', 400],
         ['Recruiter message (EN)', 'msg-recruiter-en', 'message', 'en', 410],

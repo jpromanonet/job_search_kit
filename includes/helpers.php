@@ -47,7 +47,7 @@ function phase_label(string $phase): string
 {
     return match ($phase) {
         'build' => 'Construcción',
-        'high_volume' => 'Alto volumen',
+        'high_volume' => 'Ejecución',
         'finish' => 'Cierre',
         default => $phase,
     };
@@ -59,7 +59,7 @@ function phase_label_display(?string $raw, ?string $phase = null): string
     $map = [
         'BUILD' => 'Construcción',
         'LAUNCH' => 'Lanzamiento',
-        'HIGH-VOLUME' => 'Alto volumen',
+        'HIGH-VOLUME' => 'Ejecución',
         'OPTIMIZE' => 'Optimización',
         'FINISH' => 'Cierre',
         'CLOSE' => 'Cierre',
@@ -68,7 +68,8 @@ function phase_label_display(?string $raw, ?string $phase = null): string
         'PIPELINE' => 'Pipeline',
         'CONSTRUCCIÓN' => 'Construcción',
         'LANZAMIENTO' => 'Lanzamiento',
-        'ALTO VOLUMEN' => 'Alto volumen',
+        'ALTO VOLUMEN' => 'Ejecución',
+        'EJECUCIÓN' => 'Ejecución',
         'OPTIMIZACIÓN' => 'Optimización',
         'CIERRE' => 'Cierre',
         'PROFUNDIDAD' => 'Profundidad',
@@ -93,30 +94,35 @@ function phase_badge_class(string $phase): string
     };
 }
 
-function campaign_day_number(string $startDate): int
+/**
+ * Día actual del plan = primer día aún no marcado como "Hecho".
+ * Sin fechas de calendario: arrancás cuando querés desde el Día 1.
+ */
+function focus_day_from_progress(array $days): int
 {
-    $start = new DateTimeImmutable($startDate);
-    $today = new DateTimeImmutable('today');
-    $diff = (int) $start->diff($today)->format('%r%a');
-    if ($diff < 0) {
-        return 0;
+    foreach ($days as $d) {
+        $status = (string) ($d['status'] ?? 'not_started');
+        if ($status !== 'done') {
+            $n = (int) ($d['day_number'] ?? $d['day'] ?? 1);
+            return max(1, min(100, $n));
+        }
     }
-    return min(100, $diff + 1);
+    return 100;
 }
 
-/**
- * Día a mostrar en filtro "Hoy":
- * - antes del start → Día 1 (próximo)
- * - durante → día actual
- * - después → Día 100
- */
-function focus_day_number(string $startDate): int
+/** @deprecated Usar focus_day_from_progress(); se mantiene por compatibilidad. */
+function campaign_day_number(string $startDate = ''): int
 {
-    $n = campaign_day_number($startDate);
-    if ($n < 1) {
-        return 1;
+    if (function_exists('load_plan_days')) {
+        return focus_day_from_progress(load_plan_days());
     }
-    return min(100, $n);
+    return 1;
+}
+
+/** @deprecated Usar focus_day_from_progress(); se mantiene por compatibilidad. */
+function focus_day_number(string $startDate = ''): int
+{
+    return campaign_day_number($startDate);
 }
 
 function parse_plan_date(string $label): ?string
@@ -523,7 +529,7 @@ function recommendation_groups(): array
 {
     return [
         'Campaña' => ['Campaña', 'CAMPAIGN PROMISE', 'READ THIS FIRST'],
-        'Cómo opera' => ['THE TWO PHASES', 'What counts as an application', 'Operating assumptions and safeguards', 'Candidate and AI copilot responsibilities', 'Definition of a completed day', 'DAILY EXECUTION', 'DAILY ORDER'],
+        'Cómo opera' => ['THE TWO PHASES', 'SUSTAINABLE PACE', 'What counts as an application', 'Operating assumptions and safeguards', 'Candidate and AI copilot responsibilities', 'Definition of a completed day', 'DAILY EXECUTION', 'DAILY ORDER'],
         'Targets y CVs' => ['TARGETS', 'NEGOTIATION RULE', 'Six CV role families', 'KEYWORD DISCIPLINE'],
         'Canales' => ['CHANNEL MAP', 'PORTAL AVAILABILITY', 'Argentina — job boards and search', 'Argentina — recruiters and communities', 'Direct outreach channels'],
     ];
@@ -555,13 +561,14 @@ function recommendation_title_es(string $title): string
         'CAMPAIGN PROMISE' => 'Promesa de la campaña',
         'READ THIS FIRST' => 'Leé esto primero',
         'THE TWO PHASES' => 'Las dos fases',
+        'SUSTAINABLE PACE' => 'Ritmo sostenible (5/día)',
         'What counts as an application' => 'Qué cuenta como postulación',
         'Operating assumptions and safeguards' => 'Supuestos y salvaguardas',
         'Candidate and AI copilot responsibilities' => 'Responsabilidades: candidato vs AI',
         'Definition of a completed day' => 'Definición de día completo',
         'TARGETS' => 'Targets de compensación',
         'NEGOTIATION RULE' => 'Regla de negociación',
-        'Six CV role families' => 'Seis familias de CV',
+        'Six CV role families' => 'CVs y documentos',
         'KEYWORD DISCIPLINE' => 'Disciplina de keywords',
         'CHANNEL MAP' => 'Mapa de canales',
         'PORTAL AVAILABILITY' => 'Disponibilidad de portales',

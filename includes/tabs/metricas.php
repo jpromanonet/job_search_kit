@@ -364,7 +364,7 @@ foreach ($fitBuckets as $lab => $val) {
 }
 
 $phaseBars = [];
-foreach (['build' => 'Construcción', 'high_volume' => 'Alto volumen', 'finish' => 'Cierre'] as $k => $lab) {
+foreach (['build' => 'Construcción', 'high_volume' => 'Ejecución', 'finish' => 'Cierre'] as $k => $lab) {
     $phaseBars[] = ['label' => $lab, 'value' => $phaseDone[$k], 'color' => match ($k) {
         'build' => '#175cd3',
         'high_volume' => '#0f766e',
@@ -524,7 +524,7 @@ $kpiTriple = [
     <div class="panel-head"><h2>Fases del plan hechas</h2></div>
     <?= metrics_svg_bars($phaseBars) ?>
     <div class="phase-meta">
-      <?php foreach (['build' => 'Build', 'high_volume' => 'Volumen', 'finish' => 'Cierre'] as $k => $lab): ?>
+      <?php foreach (['build' => 'Build', 'high_volume' => 'Ejecución', 'finish' => 'Cierre'] as $k => $lab): ?>
         <span><?= e($lab) ?> <?= e((string) $phaseDone[$k]) ?>/<?= e((string) $phaseTotal[$k]) ?></span>
       <?php endforeach; ?>
     </div>
@@ -552,7 +552,7 @@ $kpiTriple = [
   </section>
 
   <section class="panel metrics-card">
-    <div class="panel-head"><h2>Avance a 1.000</h2></div>
+    <div class="panel-head"><h2>Avance a <?= e((string) $target) ?></h2></div>
     <div class="progress-ring" style="--p:<?= e((string) $progressPct) ?>"><strong><?= e((string) $progressPct) ?>%</strong></div>
     <p class="muted metrics-caption" style="text-align:center"><?= e((string) $submitted) ?> enviadas · faltan <?= e((string) max(0, $target - $submitted)) ?></p>
   </section>

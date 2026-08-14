@@ -15,7 +15,7 @@ $sectionTitles = [
 <div class="page-head">
   <div>
     <h1>Portales</h1>
-    <p class="subtitle">Todos los canales del playbook para buscar y postularte (con link directo).</p>
+    <p class="subtitle">Canales de Argentina para buscar y postularte (con link directo). Sin portales internacionales.</p>
   </div>
 </div>
 

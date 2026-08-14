@@ -249,7 +249,7 @@ function ensure_cv_master_document_groups(): void
             'language' => 'es',
             'body_text' => null,
             'sort_order' => 1,
-            'description' => 'Fuente completa en español. De acá salen las variantes por rol.',
+            'description' => 'CV completo en español.',
         ],
         [
             'id' => 36,
@@ -259,7 +259,7 @@ function ensure_cv_master_document_groups(): void
             'language' => 'en',
             'body_text' => null,
             'sort_order' => 2,
-            'description' => 'Full English source. Role-specific CVs are tailored from this.',
+            'description' => 'Full CV in English.',
         ],
     ];
 

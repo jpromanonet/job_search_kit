@@ -81,6 +81,7 @@ function normalize_day_from_json(array $day): array
         'execute_today' => json_encode($day['execute_today'] ?? [], JSON_UNESCAPED_UNICODE),
         'definition_of_done' => $day['definition_of_done'] ?? null,
         'source_allocations' => json_encode($day['source_allocations'] ?? [], JSON_UNESCAPED_UNICODE),
+        'blog_publish' => !empty($day['blog_publish']),
         'blog_title' => $day['blog_title'] ?? '',
         'blog_angle' => $day['blog_angle'] ?? null,
         'blog_draft' => $day['blog_draft'] ?? null,

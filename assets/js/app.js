@@ -62,16 +62,18 @@
     const toggle = wrap.querySelector(".nav-dropdown-toggle");
     if (!toggle) return;
     toggle.addEventListener("click", function (e) {
+      e.preventDefault();
       e.stopPropagation();
-      const open = wrap.classList.toggle("is-open");
-      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      const willOpen = !wrap.classList.contains("is-open");
       document.querySelectorAll(".nav-dropdown").forEach(function (other) {
-        if (other !== wrap) {
-          other.classList.remove("is-open");
-          const t = other.querySelector(".nav-dropdown-toggle");
-          if (t) t.setAttribute("aria-expanded", "false");
-        }
+        other.classList.remove("is-open");
+        const t = other.querySelector(".nav-dropdown-toggle");
+        if (t) t.setAttribute("aria-expanded", "false");
       });
+      if (willOpen) {
+        wrap.classList.add("is-open");
+        toggle.setAttribute("aria-expanded", "true");
+      }
     });
   });
 

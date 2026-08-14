@@ -44,25 +44,34 @@ $faqActive = array_key_exists($activeTab, $faqTabs);
         <a href="<?= e(url('/index.php?tab=plan')) ?>"><?= e($appName) ?></a>
       </div>
       <nav class="nav" id="siteNav">
-        <?php foreach ($tabs as $key => $label): ?>
-          <?php if ($key === 'tecnologias'): ?>
-            <div class="nav-dropdown<?= $faqActive ? ' is-active' : '' ?>">
-              <button type="button" class="nav-dropdown-toggle<?= $faqActive ? ' is-active' : '' ?>" aria-expanded="false" aria-haspopup="true">
-                FAQ
-                <span class="nav-caret" aria-hidden="true"></span>
-              </button>
-              <div class="nav-dropdown-menu" role="menu">
-                <?php foreach ($faqTabs as $faqKey => $faqLabel): ?>
-                  <a role="menuitem"
-                     class="<?= $activeTab === $faqKey ? 'is-active' : '' ?>"
-                     href="<?= e(url('/index.php?tab=' . $faqKey)) ?>"><?= e($faqLabel) ?></a>
-                <?php endforeach; ?>
+        <div class="nav-primary">
+          <?php foreach ($tabs as $key => $label): ?>
+            <?php if ($key === 'tecnologias'): ?>
+              <div class="nav-dropdown<?= $faqActive ? ' is-active' : '' ?>">
+                <button type="button" class="nav-dropdown-toggle<?= $faqActive ? ' is-active' : '' ?>" aria-expanded="false" aria-haspopup="true">
+                  FAQ
+                  <span class="nav-caret" aria-hidden="true"></span>
+                </button>
+                <div class="nav-dropdown-menu" role="menu">
+                  <?php foreach ($faqTabs as $faqKey => $faqLabel): ?>
+                    <a role="menuitem"
+                       class="<?= $activeTab === $faqKey ? 'is-active' : '' ?>"
+                       href="<?= e(url('/index.php?tab=' . $faqKey)) ?>"><?= e($faqLabel) ?></a>
+                  <?php endforeach; ?>
+                </div>
               </div>
-            </div>
-          <?php endif; ?>
-          <a class="<?= $activeTab === $key ? 'is-active' : '' ?>"
-             href="<?= e(url('/index.php?tab=' . $key)) ?>"><?= e($label) ?></a>
-        <?php endforeach; ?>
+            <?php endif; ?>
+            <a class="<?= $activeTab === $key ? 'is-active' : '' ?>"
+               href="<?= e(url('/index.php?tab=' . $key)) ?>"><?= e($label) ?></a>
+          <?php endforeach; ?>
+        </div>
+        <form class="nav-reset-form"
+              method="post"
+              action="<?= e(url('/actions/reset_campaign.php')) ?>"
+              onsubmit="return window.confirm('REINICIAR TODO borra el progreso de los 100 días y todas las postulaciones del Tracker.\n\nNo toca el playbook, documentos ni portales.\n\n¿Seguro que querés arrancar una campaña nueva?') && window.confirm('Última confirmación: ¿reiniciar la campaña ahora?');">
+          <input type="hidden" name="confirm" value="REINICIAR">
+          <button type="submit" class="nav-reset-btn">REINICIAR TODO</button>
+        </form>
       </nav>
       <button type="button"
               class="nav-toggle"

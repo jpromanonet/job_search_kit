@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 $config = require __DIR__ . '/../../config.php';
 $days = load_plan_days();
+$appTarget = (int) $config['app']['target_applications'];
 
 $totals = [
     'planned' => 0,
@@ -13,6 +14,7 @@ $totals = [
     'blocked' => 0,
     'missed' => 0,
     'content_complete' => 0,
+    'content_due' => 0,
 ];
 foreach ($days as $d) {
     $totals['planned'] += (int) $d['applications_target'];
@@ -21,21 +23,24 @@ foreach ($days as $d) {
     if (isset($totals[$st])) {
         $totals[$st]++;
     }
-    if ((int) ($d['instagram_done'] ?? 0) && (int) ($d['linkedin_posted'] ?? 0) && (int) ($d['x_posted'] ?? 0) && !empty($d['article_url'])) {
-        $totals['content_complete']++;
+    $isBlogDay = !empty($d['blog_publish']);
+    if ($isBlogDay) {
+        $totals['content_due']++;
+        if ((int) ($d['instagram_done'] ?? 0) && (int) ($d['linkedin_posted'] ?? 0) && (int) ($d['x_posted'] ?? 0) && !empty($d['article_url'])) {
+            $totals['content_complete']++;
+        }
     }
 }
 
-$todayNum = campaign_day_number($config['app']['campaign_start']);
-$focusDay = focus_day_number($config['app']['campaign_start']);
+$todayNum = focus_day_from_progress($days);
+$focusDay = $todayNum;
 $filter = $_GET['filter'] ?? 'all';
-$remaining = max(0, (int) $config['app']['target_applications'] - $totals['logged']);
-$preCampaign = $todayNum < 1;
+$remaining = max(0, $appTarget - $totals['logged']);
 ?>
 <div class="page-head">
   <div>
     <h1>Plan de 100 días</h1>
-    <p class="subtitle"><?= e((string) count($days)) ?> días del playbook · Construcción 7 · Ejecución 93</p>
+    <p class="subtitle"><?= e((string) count($days)) ?> días · solo Argentina · máx. 5 apps/día · 1 artículo/semana</p>
   </div>
 </div>
 
@@ -48,13 +53,13 @@ $preCampaign = $todayNum < 1;
 
 <div class="stats">
   <div class="stat">
-    <div class="stat-label">Día de campaña</div>
-    <div class="stat-value"><?= $todayNum > 0 ? 'D' . e((string) $todayNum) : 'Pre' ?></div>
-    <div class="stat-meta"><?= $preCampaign ? 'Antes del Día 1' : 'Día actual del plan' ?></div>
+    <div class="stat-label">Día actual</div>
+    <div class="stat-value">D<?= e((string) $todayNum) ?></div>
+    <div class="stat-meta">próximo a trabajar</div>
   </div>
   <div class="stat">
     <div class="stat-label">Postulaciones</div>
-    <div class="stat-value"><?= e((string) $totals['logged']) ?><span class="stat-slash">/1000</span></div>
+    <div class="stat-value"><?= e((string) $totals['logged']) ?><span class="stat-slash">/<?= e((string) $appTarget) ?></span></div>
     <div class="stat-meta">Planificadas: <?= e((string) $totals['planned']) ?></div>
   </div>
   <div class="stat">
@@ -68,9 +73,9 @@ $preCampaign = $todayNum < 1;
     <div class="stat-meta">En curso: <?= e((string) $totals['in_progress']) ?></div>
   </div>
   <div class="stat">
-    <div class="stat-label">Contenido OK</div>
-    <div class="stat-value"><?= e((string) $totals['content_complete']) ?></div>
-    <div class="stat-meta">blog + redes</div>
+    <div class="stat-label">Blog semanal</div>
+    <div class="stat-value"><?= e((string) $totals['content_complete']) ?><span class="stat-slash">/<?= e((string) $totals['content_due']) ?></span></div>
+    <div class="stat-meta">días de publicación</div>
   </div>
 </div>
 
@@ -79,9 +84,9 @@ $preCampaign = $todayNum < 1;
     <?php
     $filters = [
         'all' => 'Todos',
-        'today' => $preCampaign ? 'Hoy → D1' : 'Hoy',
+        'today' => 'Hoy',
         'build' => 'Construcción 1–7',
-        'high_volume' => 'Alto volumen',
+        'high_volume' => 'Ejecución',
         'finish' => 'Cierre',
         'not_started' => 'Sin empezar',
         'in_progress' => 'En curso',
@@ -101,9 +106,9 @@ $preCampaign = $todayNum < 1;
   </div>
 </div>
 
-<?php if ($filter === 'today' && $preCampaign): ?>
+<?php if ($filter === 'today'): ?>
   <div class="flash flash-info">
-    Todavía no empezó la campaña. “Hoy” te muestra el <strong>Día 1</strong> (el próximo a ejecutar).
+    “Hoy” muestra el <strong>Día <?= e((string) $focusDay) ?></strong>: el próximo que todavía no marcaste como Hecho.
   </div>
 <?php endif; ?>
 
@@ -137,7 +142,7 @@ foreach ($days as $day):
       <div>
         <span class="day-number">Día <?= e((string) $num) ?></span>
         <?php if ($isToday): ?>
-          <span class="badge badge-warn"><?= $preCampaign ? 'PRÓXIMO' : 'HOY' ?></span>
+          <span class="badge badge-warn">HOY</span>
         <?php endif; ?>
       </div>
       <div class="chip-row">
@@ -199,9 +204,13 @@ foreach ($days as $day):
         <div class="box"><strong>Definición de hecho</strong><p class="muted" style="margin:.4rem 0 0"><?= e($day['definition_of_done']) ?></p></div>
       <?php endif; ?>
 
+      <?php
+        $isBlogDay = !empty($day['blog_publish']);
+      ?>
+      <?php if ($isBlogDay): ?>
       <div class="grid-2" style="margin-top:1rem">
         <div class="box">
-          <span class="content-label">Blog</span>
+          <span class="content-label">Blog · publicar esta semana</span>
           <div style="font-family:var(--font-display);font-weight:600;margin-bottom:.35rem"><?= e($day['blog_title'] ?? '') ?></div>
           <?php if (!empty($day['blog_angle'])): ?><p class="muted" style="margin:0"><em>Ángulo:</em> <?= e($day['blog_angle']) ?></p><?php endif; ?>
           <?php if (!empty($day['blog_draft'])): ?><p class="muted" style="margin:.4rem 0 0"><?= e($day['blog_draft']) ?></p><?php endif; ?>
@@ -221,6 +230,7 @@ foreach ($days as $day):
           </div>
         </div>
       </div>
+      <?php endif; ?>
 
       <?php if (!empty($day['close_day_proof'])): ?>
         <div class="box"><strong>Prueba de cierre</strong><p class="muted" style="margin:.4rem 0 0"><?= e($day['close_day_proof']) ?></p></div>
@@ -241,17 +251,21 @@ foreach ($days as $day):
           <label>Apps registradas</label>
           <input type="number" min="0" max="50" name="applications_logged" value="<?= e((string) ($day['applications_logged'] ?? 0)) ?>">
         </div>
-        <div class="field span-6">
-          <label>URL del artículo</label>
-          <input type="url" name="article_url" value="<?= e($day['article_url'] ?? '') ?>" placeholder="https://...">
-        </div>
-        <div class="field span-12">
-          <div class="check-row">
-            <label><input type="checkbox" name="linkedin_posted" value="1" <?= (int) ($day['linkedin_posted'] ?? 0) ? 'checked' : '' ?>> LinkedIn</label>
-            <label><input type="checkbox" name="x_posted" value="1" <?= (int) ($day['x_posted'] ?? 0) ? 'checked' : '' ?>> X</label>
-            <label><input type="checkbox" name="instagram_done" value="1" <?= (int) ($day['instagram_done'] ?? 0) ? 'checked' : '' ?>> Instagram Story</label>
+        <?php if ($isBlogDay): ?>
+          <div class="field span-6">
+            <label>URL del artículo</label>
+            <input type="url" name="article_url" value="<?= e($day['article_url'] ?? '') ?>" placeholder="https://...">
           </div>
-        </div>
+          <div class="field span-12">
+            <div class="check-row">
+              <label><input type="checkbox" name="linkedin_posted" value="1" <?= (int) ($day['linkedin_posted'] ?? 0) ? 'checked' : '' ?>> LinkedIn</label>
+              <label><input type="checkbox" name="x_posted" value="1" <?= (int) ($day['x_posted'] ?? 0) ? 'checked' : '' ?>> X</label>
+              <label><input type="checkbox" name="instagram_done" value="1" <?= (int) ($day['instagram_done'] ?? 0) ? 'checked' : '' ?>> Instagram Story</label>
+            </div>
+          </div>
+        <?php else: ?>
+          <input type="hidden" name="article_url" value="">
+        <?php endif; ?>
         <div class="field span-6"><label>Notas</label><textarea name="notes" rows="2"><?= e($day['notes'] ?? '') ?></textarea></div>
         <div class="field span-6"><label>Evidencia</label><textarea name="evidence" rows="2"><?= e($day['evidence'] ?? '') ?></textarea></div>
         <div class="field span-6"><label>Bloqueos</label><textarea name="blockers" rows="2"><?= e($day['blockers'] ?? '') ?></textarea></div>

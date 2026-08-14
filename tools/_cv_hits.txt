@@ -1,0 +1,9 @@
+D2 definition_of_done: CV maestro ES y Master CV EN aprobados; archivos DOCX/PDF/TXT cargados en Documentos; matriz simple de cuándo usar cada idioma.
+
+D79 close_day_proof: Hasta 5 registros AR válidos; 2 outreach/follow-ups; acumulado 360/465.
+
+D79 execute_today: Cerrar el día con evidencia. Acumulado objetivo del día: 360/465.
+
+D80 close_day_proof: Hasta 5 registros AR válidos; 2 outreach/follow-ups; acumulado 365/465.
+
+D80 execute_today: Cerrar el día con evidencia. Acumulado objetivo del día: 365/465.

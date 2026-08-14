@@ -59,7 +59,7 @@ if ($editId > 0) {
 if ($isNew) {
     $prefillDay = isset($_GET['day']) ? (int) $_GET['day'] : 0;
     if ($prefillDay < 1 || $prefillDay > 100) {
-        $prefillDay = campaign_day_number($config['app']['campaign_start']) ?: null;
+        $prefillDay = focus_day_from_progress(load_plan_days());
     }
     $editing = [
         'id' => 0,
@@ -88,7 +88,7 @@ if ($isNew) {
     ];
 }
 
-$todayNum = campaign_day_number($config['app']['campaign_start']);
+$todayNum = focus_day_from_progress(load_plan_days());
 ?>
 <div class="page-head">
   <div>
@@ -104,12 +104,16 @@ $todayNum = campaign_day_number($config['app']['campaign_start']);
 </div>
 
 <div class="stats">
-  <div class="stat"><div class="stat-label">Enviadas</div><div class="stat-value"><?= e((string) $totalSubmitted) ?><span class="stat-slash">/1000</span></div></div>
-  <div class="stat"><div class="stat-label">Argentina</div><div class="stat-value"><?= e((string) $marketCounts['ar']) ?><span class="stat-slash">/500</span></div></div>
-  <div class="stat"><div class="stat-label">Internacional</div><div class="stat-value"><?= e((string) $marketCounts['intl']) ?><span class="stat-slash">/500</span></div></div>
+  <div class="stat"><div class="stat-label">Enviadas</div><div class="stat-value"><?= e((string) $totalSubmitted) ?><span class="stat-slash">/<?= e((string) (int) $config['app']['target_applications']) ?></span></div></div>
+  <div class="stat"><div class="stat-label">Argentina</div><div class="stat-value"><?= e((string) $marketCounts['ar']) ?><span class="stat-slash">/<?= e((string) (int) $config['app']['target_ar']) ?></span></div></div>
+  <?php if ((int) ($config['app']['target_intl'] ?? 0) > 0): ?>
+    <div class="stat"><div class="stat-label">Internacional</div><div class="stat-value"><?= e((string) $marketCounts['intl']) ?><span class="stat-slash">/<?= e((string) (int) $config['app']['target_intl']) ?></span></div></div>
+  <?php else: ?>
+    <div class="stat"><div class="stat-label">Mercado</div><div class="stat-value">AR</div><div class="stat-meta">solo Argentina</div></div>
+  <?php endif; ?>
   <div class="stat"><div class="stat-label">Follow-ups vencidos</div><div class="stat-value"><?= e((string) $overdue) ?></div></div>
   <div class="stat"><div class="stat-label">Ofertas</div><div class="stat-value"><?= e((string) ($counts['offer'] ?? 0)) ?></div></div>
-  <div class="stat"><div class="stat-label">Día campaña</div><div class="stat-value"><?= $todayNum > 0 ? 'D' . e((string) $todayNum) : 'Pre' ?></div></div>
+  <div class="stat"><div class="stat-label">Día actual</div><div class="stat-value">D<?= e((string) $todayNum) ?></div></div>
 </div>
 
 <section class="panel">

@@ -21,10 +21,12 @@ $config = [
         // Vacío = se detecta solo desde la URL (mejor para /jobkit/ y localhost).
         'url' => '',
         'timezone' => 'America/Argentina/Buenos_Aires',
-        'campaign_start' => '2026-08-10',
-        'target_applications' => 1000,
-        'target_ar' => 500,
-        'target_intl' => 500,
+        // Sin fecha fija: el plan arranca en Día 1 cuando vos lo marques.
+        'target_applications' => 465,
+        'target_ar' => 465,
+        'target_intl' => 0,
+        'apps_per_day' => 5,
+        'blog_per_week' => 1,
     ],
     'paths' => [
         'root' => __DIR__,

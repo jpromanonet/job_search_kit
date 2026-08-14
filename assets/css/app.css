@@ -43,14 +43,18 @@ code { color: #334155; background: #e8eef5; padding: 0.1rem 0.35rem; border-radi
   z-index: 40;
   border-bottom: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.97);
+  overflow: visible;
 }
 .topbar-inner {
-  width: min(1180px, calc(100% - 2rem));
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.85rem 0;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  box-sizing: border-box;
+  overflow: visible;
 }
 .brand {
   flex: 0 0 auto;
@@ -59,7 +63,7 @@ code { color: #334155; background: #e8eef5; padding: 0.1rem 0.35rem; border-radi
 .brand a {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   color: var(--ink);
   text-decoration: none;
   letter-spacing: -0.03em;
@@ -122,19 +126,30 @@ code { color: #334155; background: #e8eef5; padding: 0.1rem 0.35rem; border-radi
 }
 .nav {
   display: flex;
-  gap: 0.2rem;
+  align-items: center;
+  gap: 0.5rem;
   flex: 1 1 auto;
-  flex-wrap: wrap;
+  min-width: 0;
+  overflow: visible;
+}
+.nav-primary {
+  display: flex;
+  gap: 0.1rem;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
   align-items: center;
   min-width: 0;
+  overflow: visible;
 }
 .nav a {
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 600;
   text-decoration: none;
-  padding: 0.45rem 0.75rem;
+  padding: 0.4rem 0.55rem;
   border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .nav a:hover,
 .nav a.is-active {
@@ -144,6 +159,8 @@ code { color: #334155; background: #e8eef5; padding: 0.1rem 0.35rem; border-radi
 }
 .nav-dropdown {
   position: relative;
+  flex-shrink: 0;
+  z-index: 60;
 }
 .nav-dropdown-toggle {
   appearance: none;
@@ -151,14 +168,16 @@ code { color: #334155; background: #e8eef5; padding: 0.1rem 0.35rem; border-radi
   background: transparent;
   color: var(--muted);
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  padding: 0.45rem 0.75rem;
+  padding: 0.4rem 0.55rem;
   border-radius: 10px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .nav-dropdown-toggle:hover,
 .nav-dropdown-toggle.is-active,
@@ -185,7 +204,7 @@ code { color: #334155; background: #e8eef5; padding: 0.1rem 0.35rem; border-radi
   border-radius: 12px;
   background: #fff;
   box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
-  z-index: 50;
+  z-index: 70;
 }
 .nav-dropdown.is-open .nav-dropdown-menu {
   display: flex;
@@ -196,11 +215,35 @@ code { color: #334155; background: #e8eef5; padding: 0.1rem 0.35rem; border-radi
   display: block;
   white-space: nowrap;
 }
+.nav-reset-form {
+  margin: 0 0 0 auto;
+  display: inline-flex;
+  flex-shrink: 0;
+  order: 2;
+}
+.nav-reset-btn {
+  appearance: none;
+  border: 1px solid #912018;
+  background: #b42318;
+  color: #fff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.45rem 0.75rem;
+  border-radius: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nav-reset-btn:hover {
+  filter: brightness(1.08);
+  color: #fff;
+}
 
 @media (max-width: 960px) {
   .topbar-inner {
-    width: calc(100% - 2rem);
-    padding: 0.75rem 0;
+    width: 100%;
+    padding: 0.75rem 1rem;
     gap: 0.75rem;
   }
   .brand {
@@ -252,12 +295,30 @@ code { color: #334155; background: #e8eef5; padding: 0.1rem 0.35rem; border-radi
     transform: translateX(0);
     pointer-events: auto;
   }
-  .nav > a,
+  .nav-primary {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+    width: 100%;
+  }
+  .nav-primary > a,
   .nav-dropdown-toggle {
     width: 100%;
     justify-content: space-between;
     padding: 0.75rem 0.85rem;
     font-size: 1rem;
+  }
+  .nav-reset-form {
+    width: 100%;
+    margin: 0.85rem 0 0;
+    order: 3;
+  }
+  .nav-reset-btn {
+    width: 100%;
+    padding: 0.85rem;
+    font-size: 0.95rem;
   }
   .nav-dropdown {
     width: 100%;

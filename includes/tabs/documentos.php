@@ -40,28 +40,13 @@ if (!$groups) {
 $sections = [
     [
         'title' => 'CVs maestros',
-        'subtitle' => 'Español e inglés · base completa para derivar variantes',
+        'subtitle' => 'Español e inglés · DOCX / PDF / TXT',
         'match' => static fn (array $g): bool => str_starts_with((string) ($g['slug'] ?? ''), 'cv-master'),
-    ],
-    [
-        'title' => 'CVs en español',
-        'subtitle' => 'Seis familias · DOCX / PDF / TXT',
-        'match' => static fn (array $g): bool => $g['category'] === 'cv' && $g['language'] === 'es' && !str_starts_with((string) ($g['slug'] ?? ''), 'cv-master'),
-    ],
-    [
-        'title' => 'CVs en inglés',
-        'subtitle' => 'Seis familias · DOCX / PDF / TXT',
-        'match' => static fn (array $g): bool => $g['category'] === 'cv' && $g['language'] === 'en' && !str_starts_with((string) ($g['slug'] ?? ''), 'cv-master'),
     ],
     [
         'title' => 'Cartas de presentación',
         'subtitle' => 'Español e inglés',
         'match' => static fn (array $g): bool => $g['category'] === 'cover_letter',
-    ],
-    [
-        'title' => 'Resúmenes / hechos',
-        'subtitle' => 'Fuente de verdad y banco de logros · ES e EN',
-        'match' => static fn (array $g): bool => $g['category'] === 'summary',
     ],
     [
         'title' => 'Mensajes a reclutadores',
@@ -93,7 +78,7 @@ $sections = [
 <div class="page-head">
   <div>
     <h1>Documentos</h1>
-    <p class="subtitle">Grupos claros: CVs por idioma, cartas, resúmenes y mensajes bilingües. Subí DOCX, PDF o TXT por fila.</p>
+    <p class="subtitle">CVs maestros, cartas y mensajes bilingües. Subí DOCX, PDF o TXT por fila.</p>
   </div>
 </div>
 

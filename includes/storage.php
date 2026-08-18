@@ -420,3 +420,172 @@ function delete_document_file_by_id(int $id): ?array
     save_document_files($out);
     return $removed;
 }
+
+function ats_lakes_store_path(): string
+{
+    $config = require __DIR__ . '/../config.php';
+    $dir = $config['paths']['data'];
+    if (!is_dir($dir)) {
+        mkdir($dir, 0775, true);
+    }
+    return $dir . '/ats_lakes.json';
+}
+
+function default_ats_lakes(): array
+{
+    return [
+        'es' => [
+            'text' => '',
+            'source_name' => null,
+            'updated_at' => null,
+        ],
+        'en' => [
+            'text' => '',
+            'source_name' => null,
+            'updated_at' => null,
+        ],
+    ];
+}
+
+function load_ats_lakes(): array
+{
+    $defaults = default_ats_lakes();
+    $path = ats_lakes_store_path();
+    if (!is_file($path)) {
+        return $defaults;
+    }
+    $raw = file_get_contents($path);
+    if ($raw === false || trim($raw) === '') {
+        return $defaults;
+    }
+    try {
+        $data = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+    } catch (Throwable $e) {
+        return $defaults;
+    }
+    if (!is_array($data)) {
+        return $defaults;
+    }
+    foreach (['es', 'en'] as $lang) {
+        $row = is_array($data[$lang] ?? null) ? $data[$lang] : [];
+        $defaults[$lang] = [
+            'text' => (string) ($row['text'] ?? ''),
+            'source_name' => isset($row['source_name']) && $row['source_name'] !== ''
+                ? (string) $row['source_name']
+                : null,
+            'updated_at' => isset($row['updated_at']) && $row['updated_at'] !== ''
+                ? (string) $row['updated_at']
+                : null,
+        ];
+    }
+    return $defaults;
+}
+
+function save_ats_lakes(array $lakes): void
+{
+    $normalized = default_ats_lakes();
+    foreach (['es', 'en'] as $lang) {
+        $row = is_array($lakes[$lang] ?? null) ? $lakes[$lang] : [];
+        $normalized[$lang] = [
+            'text' => (string) ($row['text'] ?? ''),
+            'source_name' => isset($row['source_name']) && $row['source_name'] !== ''
+                ? (string) $row['source_name']
+                : null,
+            'updated_at' => isset($row['updated_at']) && $row['updated_at'] !== ''
+                ? (string) $row['updated_at']
+                : null,
+        ];
+    }
+    $json = json_encode($normalized, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if ($json === false) {
+        throw new RuntimeException('No se pudo serializar ats_lakes.json');
+    }
+    write_data_file(ats_lakes_store_path(), $json . "\n");
+}
+
+function update_ats_lake(string $lang, string $text, ?string $sourceName = null): array
+{
+    if (!in_array($lang, ['es', 'en'], true)) {
+        throw new InvalidArgumentException('Idioma ATS inválido.');
+    }
+    $lakes = load_ats_lakes();
+    $lakes[$lang] = [
+        'text' => $text,
+        'source_name' => $sourceName !== null && $sourceName !== ''
+            ? $sourceName
+            : ($lakes[$lang]['source_name'] ?? null),
+        'updated_at' => date('Y-m-d H:i:s'),
+    ];
+    save_ats_lakes($lakes);
+    return $lakes[$lang];
+}
+
+/**
+ * Parse a free-text ATS lake into unique keyword tokens.
+ *
+ * @return list<string>
+ */
+function parse_ats_keywords(string $text): array
+{
+    $parts = preg_split('/[\r\n,;|]+/u', $text) ?: [];
+    $seen = [];
+    $out = [];
+    foreach ($parts as $part) {
+        $word = trim(preg_replace('/\s+/u', ' ', (string) $part) ?? '');
+        if ($word === '') {
+            continue;
+        }
+        $key = function_exists('mb_strtolower')
+            ? mb_strtolower($word, 'UTF-8')
+            : strtolower($word);
+        if (isset($seen[$key])) {
+            continue;
+        }
+        $seen[$key] = true;
+        $out[] = $word;
+    }
+    return $out;
+}
+
+function extract_text_from_docx(string $path): string
+{
+    if (!class_exists('ZipArchive')) {
+        throw new RuntimeException('PHP ZipArchive no está disponible para leer DOCX.');
+    }
+    $zip = new ZipArchive();
+    if ($zip->open($path) !== true) {
+        throw new RuntimeException('No se pudo abrir el DOCX.');
+    }
+    $xml = $zip->getFromName('word/document.xml');
+    $zip->close();
+    if ($xml === false || $xml === '') {
+        throw new RuntimeException('El DOCX no tiene word/document.xml legible.');
+    }
+    $xml = str_replace(['</w:p>', '</w:tr>', '</w:tbl>'], "\n", $xml);
+    $xml = str_replace(['<w:tab/>', '<w:br/>', '<w:cr/>'], "\t", $xml);
+    $text = strip_tags($xml);
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_XML1, 'UTF-8');
+    $text = preg_replace("/[ \t]+\n/", "\n", $text) ?? $text;
+    $text = preg_replace("/\n{3,}/", "\n\n", $text) ?? $text;
+    return trim($text);
+}
+
+function extract_text_from_upload(string $tmpPath, string $originalName, string $mime = ''): string
+{
+    $format = detect_format_from_upload($originalName, $mime) ?? '';
+    $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+    if ($format === 'docx' || $ext === 'docx') {
+        return extract_text_from_docx($tmpPath);
+    }
+    if (in_array($format, ['txt', 'md'], true) || in_array($ext, ['txt', 'md', 'csv'], true)) {
+        $raw = file_get_contents($tmpPath);
+        if ($raw === false) {
+            throw new RuntimeException('No se pudo leer el archivo de texto.');
+        }
+        if (str_starts_with($raw, "\xEF\xBB\xBF")) {
+            $raw = substr($raw, 3);
+        }
+        return trim($raw);
+    }
+    throw new RuntimeException('Formato no soportado. Usá DOCX, TXT o MD.');
+}

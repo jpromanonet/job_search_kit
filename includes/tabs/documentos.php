@@ -5,7 +5,6 @@ declare(strict_types=1);
 $formats = ['docx', 'pdf', 'txt'];
 $groups = [];
 $filesByGroup = [];
-$usingFiles = false;
 
 ensure_cv_master_document_groups();
 
@@ -26,7 +25,6 @@ try {
 }
 
 if (!$groups) {
-    $usingFiles = true;
     $groups = load_document_groups();
     foreach (load_document_files() as $file) {
         $gid = (int) $file['group_id'];
@@ -37,48 +35,61 @@ if (!$groups) {
     }
 }
 
-$sections = [
+$fileSections = [
     [
         'title' => 'CVs maestros',
         'subtitle' => 'Español e inglés · DOCX / PDF / TXT',
-        'match' => static fn (array $g): bool => str_starts_with((string) ($g['slug'] ?? ''), 'cv-master'),
+        'match' => static fn (array $g): bool => str_starts_with((string) ($g['slug'] ?? ''), 'cv-master')
+            || ($g['category'] ?? '') === 'cv',
     ],
     [
         'title' => 'Cartas de presentación',
-        'subtitle' => 'Español e inglés',
-        'match' => static fn (array $g): bool => $g['category'] === 'cover_letter',
+        'subtitle' => 'Español e inglés · archivos + texto editable',
+        'match' => static fn (array $g): bool => ($g['category'] ?? '') === 'cover_letter',
     ],
+];
+
+$textSections = [
     [
         'title' => 'Mensajes a reclutadores',
-        'subtitle' => 'Español e inglés',
-        'match' => static fn (array $g): bool => $g['category'] === 'message' && str_contains($g['slug'], 'recruiter'),
+        'subtitle' => 'Texto editable · copiar y pegar',
+        'match' => static fn (array $g): bool => ($g['category'] ?? '') === 'message' && str_contains((string) $g['slug'], 'recruiter'),
     ],
     [
         'title' => 'Mensajes a CTO / CEO',
-        'subtitle' => 'Español e inglés',
-        'match' => static fn (array $g): bool => $g['category'] === 'message' && str_contains($g['slug'], 'cto'),
+        'subtitle' => 'Texto editable · copiar y pegar',
+        'match' => static fn (array $g): bool => ($g['category'] ?? '') === 'message' && str_contains((string) $g['slug'], 'cto'),
     ],
     [
         'title' => 'Hiring manager / referidos',
-        'subtitle' => 'Contacto directo y referidos',
-        'match' => static fn (array $g): bool => $g['category'] === 'message' && (str_contains($g['slug'], 'hm') || str_contains($g['slug'], 'referral')),
+        'subtitle' => 'Texto editable · copiar y pegar',
+        'match' => static fn (array $g): bool => ($g['category'] ?? '') === 'message' && (str_contains((string) $g['slug'], 'hm') || str_contains((string) $g['slug'], 'referral')),
     ],
     [
         'title' => 'Follow-ups',
-        'subtitle' => 'Español e inglés',
-        'match' => static fn (array $g): bool => $g['category'] === 'message' && str_contains($g['slug'], 'followup'),
+        'subtitle' => 'Texto editable · copiar y pegar',
+        'match' => static fn (array $g): bool => ($g['category'] ?? '') === 'message' && str_contains((string) $g['slug'], 'followup'),
     ],
     [
         'title' => 'Agradecimientos y script salarial',
-        'subtitle' => 'Thank-you + negociación',
-        'match' => static fn (array $g): bool => $g['category'] === 'message' && (str_contains($g['slug'], 'thank') || str_contains($g['slug'], 'salary')),
+        'subtitle' => 'Texto editable · copiar y pegar',
+        'match' => static fn (array $g): bool => ($g['category'] ?? '') === 'message' && (str_contains((string) $g['slug'], 'thank') || str_contains((string) $g['slug'], 'salary')),
     ],
 ];
+
+$langLabel = static function (array $group): string {
+    return match ($group['language'] ?? '') {
+        'es' => 'ES',
+        'en' => 'EN',
+        'both' => 'ES/EN',
+        default => '—',
+    };
+};
 ?>
 <div class="page-head">
   <div>
     <h1>Documentos</h1>
-    <p class="subtitle">CVs maestros, cartas y mensajes bilingües. Subí DOCX, PDF o TXT por fila.</p>
+    <p class="subtitle">CVs y cartas con archivos. El resto: texto editable para copiar y pegar.</p>
   </div>
 </div>
 
@@ -88,7 +99,7 @@ $sections = [
   </div>
 <?php endif; ?>
 
-<?php foreach ($sections as $section):
+<?php foreach ($fileSections as $section):
     $rows = array_values(array_filter($groups, $section['match']));
     if (!$rows) {
         continue;
@@ -119,16 +130,11 @@ $sections = [
           <?php foreach ($rows as $group):
               $gid = (int) $group['id'];
               $fileMap = $filesByGroup[$gid] ?? [];
-              $lang = match ($group['language']) {
-                  'es' => 'ES',
-                  'en' => 'EN',
-                  'both' => 'ES/EN',
-                  default => '—',
-              };
+              $isCover = ($group['category'] ?? '') === 'cover_letter';
           ?>
             <tr id="doc-<?= e((string) $gid) ?>">
               <td class="name"><?= e($group['name']) ?></td>
-              <td><span class="badge badge-muted"><?= e($lang) ?></span></td>
+              <td><span class="badge badge-muted"><?= e($langLabel($group)) ?></span></td>
               <?php foreach ($formats as $fmt):
                   $has = isset($fileMap[$fmt]);
               ?>
@@ -171,14 +177,14 @@ $sections = [
                         </div>
                       </form>
 
-                      <?php if (in_array($group['category'], ['message', 'cover_letter', 'summary'], true)): ?>
+                      <?php if ($isCover): ?>
                         <form method="post" action="<?= e(url('/actions/save_document_text.php')) ?>" style="margin-top:.75rem">
                           <input type="hidden" name="group_id" value="<?= e((string) $gid) ?>">
                           <div class="field">
                             <label>Texto / template</label>
                             <textarea name="body_text" id="body-<?= e((string) $gid) ?>" rows="5"><?= e($group['body_text'] ?? '') ?></textarea>
                           </div>
-                          <div style="display:flex;gap:.4rem;margin-top:.5rem">
+                          <div style="display:flex;gap:.4rem;margin-top:.5rem;flex-wrap:wrap">
                             <button type="submit" class="btn btn-sm btn-accent">Guardar texto</button>
                             <button type="button" class="btn btn-sm btn-copy" data-copy-target="body-<?= e((string) $gid) ?>">Copiar</button>
                           </div>
@@ -205,6 +211,51 @@ $sections = [
           <?php endforeach; ?>
         </tbody>
       </table>
+    </div>
+  </section>
+<?php endforeach; ?>
+
+<?php foreach ($textSections as $section):
+    $rows = array_values(array_filter($groups, $section['match']));
+    if (!$rows) {
+        continue;
+    }
+?>
+  <section class="panel" id="<?= e(preg_replace('/[^a-z0-9]+/i', '-', strtolower($section['title']))) ?>">
+    <div class="panel-head">
+      <div>
+        <h2><?= e($section['title']) ?></h2>
+        <div class="muted" style="margin-top:.25rem"><?= e($section['subtitle']) ?></div>
+      </div>
+      <span class="count"><?= e((string) count($rows)) ?> template(s)</span>
+    </div>
+
+    <div class="doc-text-grid">
+      <?php foreach ($rows as $group):
+          $gid = (int) $group['id'];
+          $bodyId = 'body-' . $gid;
+      ?>
+        <article class="doc-text-card" id="doc-<?= e((string) $gid) ?>">
+          <div class="doc-text-card__head">
+            <strong><?= e($group['name']) ?></strong>
+            <span class="badge badge-muted"><?= e($langLabel($group)) ?></span>
+          </div>
+          <form method="post" action="<?= e(url('/actions/save_document_text.php')) ?>">
+            <input type="hidden" name="group_id" value="<?= e((string) $gid) ?>">
+            <label class="sr-only" for="<?= e($bodyId) ?>">Texto</label>
+            <textarea
+              class="doc-text-card__body"
+              name="body_text"
+              id="<?= e($bodyId) ?>"
+              rows="8"
+              placeholder="Escribí o pegá el mensaje acá…"><?= e($group['body_text'] ?? '') ?></textarea>
+            <div class="doc-text-card__actions">
+              <button type="submit" class="btn btn-sm btn-accent">Guardar</button>
+              <button type="button" class="btn btn-sm btn-copy" data-copy-target="<?= e($bodyId) ?>">Copiar</button>
+            </div>
+          </form>
+        </article>
+      <?php endforeach; ?>
     </div>
   </section>
 <?php endforeach; ?>

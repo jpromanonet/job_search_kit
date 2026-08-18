@@ -13,7 +13,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 $config = require __DIR__ . '/config.php';
 
-$allowedTabs = ['plan', 'portales', 'recomendaciones', 'hr_faq', 'preguntas', 'tecnologias', 'documentos', 'tracker', 'comparador', 'metricas'];
+$allowedTabs = ['plan', 'portales', 'recomendaciones', 'hr_faq', 'preguntas', 'tecnologias', 'documentos', 'ats', 'tracker', 'comparador', 'metricas'];
 $activeTab = $_GET['tab'] ?? 'plan';
 if (!in_array($activeTab, $allowedTabs, true)) {
     $activeTab = 'plan';
@@ -27,6 +27,7 @@ $tabTitles = [
     'preguntas' => 'Mis preguntas',
     'tecnologias' => 'Tecnologías',
     'documentos' => 'Documentos',
+    'ats' => 'Palabras ATS',
     'tracker' => 'Tracker',
     'comparador' => 'Comparador',
     'metricas' => 'Métricas',

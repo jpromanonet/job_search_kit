@@ -17,6 +17,7 @@ $tabs = [
     'recomendaciones' => 'Recomendaciones',
     'tecnologias' => 'Tecnologías',
     'documentos' => 'Documentos',
+    'ats' => 'Palabras ATS',
     'tracker' => 'Tracker',
     'comparador' => 'Comparador',
     'metricas' => 'Métricas',

@@ -697,14 +697,30 @@ function stage_label(string $stage): string
 function stage_badge_class(string $stage): string
 {
     return match ($stage) {
-        'discovered', 'selected', 'preparing' => 'text-bg-secondary',
-        'applied', 'follow_up' => 'text-bg-primary',
-        'recruiter_screen', 'technical', 'leadership', 'final' => 'text-bg-info',
-        'offer' => 'text-bg-warning',
-        'accepted' => 'text-bg-success',
-        'rejected', 'closed' => 'text-bg-dark',
-        default => 'text-bg-light',
+        'discovered', 'selected', 'preparing' => 'badge-muted',
+        'applied', 'follow_up' => 'badge-ok',
+        'recruiter_screen', 'technical', 'leadership', 'final' => 'badge-info',
+        'offer' => 'badge-warn',
+        'accepted' => 'badge-ok',
+        'rejected', 'closed' => 'badge-muted',
+        default => 'badge-muted',
     };
+}
+
+function format_display_date(?string $date): string
+{
+    if ($date === null) {
+        return '—';
+    }
+    $raw = trim($date);
+    if ($raw === '') {
+        return '—';
+    }
+    $dt = DateTime::createFromFormat('Y-m-d', substr($raw, 0, 10));
+    if (!$dt instanceof DateTime) {
+        return $raw;
+    }
+    return $dt->format('d/m/Y');
 }
 
 function role_families(): array

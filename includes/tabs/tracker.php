@@ -289,61 +289,73 @@ $todayNum = focus_day_from_progress(load_plan_days());
 <?php if ($view === 'kanban'): ?>
   <div class="kanban-board">
     <?php
-    $kanbanStages = ['discovered','preparing','applied','follow_up','recruiter_screen','technical','final','offer'];
+    $kanbanStages = ['applied','follow_up','recruiter_screen','technical','final','offer'];
     $byStage = [];
     foreach ($apps as $app) {
-        $byStage[$app['stage'] ?? 'discovered'][] = $app;
+        $stage = (string) ($app['stage'] ?? 'applied');
+        if ($stage === 'discovered' || $stage === 'selected' || $stage === 'preparing') {
+            $stage = 'applied';
+        }
+        $byStage[$stage][] = $app;
     }
     foreach ($kanbanStages as $st):
         $col = $byStage[$st] ?? [];
     ?>
-      <div class="kanban-col">
-        <div class="kanban-col__head"><?= e(stage_label($st)) ?> <span class="badge"><?= count($col) ?></span></div>
+      <div class="kanban-col" data-stage="<?= e($st) ?>">
+        <div class="kanban-col__head">
+          <span><?= e(stage_label($st)) ?></span>
+          <span class="badge kanban-count"><?= count($col) ?></span>
+        </div>
         <?php foreach ($col as $app): ?>
-          <a class="kanban-card" id="app-<?= e((string) $app['id']) ?>" href="<?= e(url('/index.php?tab=tracker&edit=' . $app['id'])) ?>#app-form">
+          <article class="kanban-card" draggable="true" data-id="<?= e((string) $app['id']) ?>" id="app-<?= e((string) $app['id']) ?>">
             <strong><?= e($app['company']) ?></strong>
-            <div class="muted"><?= e($app['role_title']) ?></div>
-            <div class="muted"><?= e(strtoupper((string) $app['market'])) ?> · <?= e($app['platform'] ?? '—') ?></div>
-          </a>
+            <div class="kanban-card__role"><?= e($app['role_title']) ?></div>
+            <div class="muted kanban-card__meta">
+              <?= e(strtoupper((string) $app['market'])) ?>
+              <?php if (!empty($app['application_date'])): ?>
+                · <?= e(format_display_date((string) $app['application_date'])) ?>
+              <?php endif; ?>
+            </div>
+            <a class="kanban-card__edit" draggable="false" href="<?= e(url('/index.php?tab=tracker&edit=' . $app['id'])) ?>#app-form">Editar</a>
+          </article>
         <?php endforeach; ?>
       </div>
     <?php endforeach; ?>
   </div>
 <?php else: ?>
-  <section class="panel">
-    <div style="overflow:auto">
-      <table class="data-table">
+  <section class="panel tracker-table-panel">
+    <div class="table-wrap">
+      <table class="data-table tracker-table">
         <thead>
           <tr>
-            <th>ID</th><th>Empresa</th><th>Rol</th><th>Mkt</th><th>Fuente</th>
+            <th>ID</th><th>Empresa</th><th>Rol</th><th>Mkt</th>
             <th>Fit</th><th>Stage</th><th>Fecha</th><th>Follow-up</th><th></th>
           </tr>
         </thead>
         <tbody>
           <?php if (!$apps): ?>
-            <tr><td colspan="10" class="muted">Todavía no hay postulaciones. Tocá <strong>+ Nueva postulación</strong>.</td></tr>
+            <tr><td colspan="9" class="muted">Todavía no hay postulaciones. Tocá <strong>+ Nueva postulación</strong>.</td></tr>
           <?php endif; ?>
           <?php foreach ($apps as $app): ?>
             <tr id="app-<?= e((string) $app['id']) ?>">
-              <td>#<?= e((string) $app['id']) ?></td>
-              <td>
+              <td class="cell-id">#<?= e((string) $app['id']) ?></td>
+              <td class="cell-company">
                 <strong><?= e($app['company']) ?></strong>
                 <?php if (!empty($app['canonical_url'])): ?>
-                  <a href="<?= e($app['canonical_url']) ?>" target="_blank" rel="noopener">↗</a>
+                  <a href="<?= e($app['canonical_url']) ?>" target="_blank" rel="noopener" title="Abrir oferta">↗</a>
                 <?php endif; ?>
               </td>
-              <td><?= e($app['role_title']) ?></td>
+              <td class="cell-role"><?= e($app['role_title']) ?></td>
               <td><?= e(strtoupper((string) $app['market'])) ?></td>
-              <td><?= e($app['platform'] ?? '') ?></td>
               <td><?= $app['fit_score'] !== null && $app['fit_score'] !== '' ? e((string) $app['fit_score']) . '%' : '—' ?></td>
-              <td><span class="badge"><?= e(stage_label($app['stage'] ?? '')) ?></span></td>
-              <td><?= e($app['application_date'] ?? '') ?></td>
-              <td><?= e($app['follow_up_date'] ?? '') ?></td>
-              <td>
+              <td><span class="badge <?= e(stage_badge_class((string) ($app['stage'] ?? ''))) ?>"><?= e(stage_label($app['stage'] ?? '')) ?></span></td>
+              <td class="cell-date"><?= e(format_display_date($app['application_date'] ?? null)) ?></td>
+              <td class="cell-date"><?= e(format_display_date($app['follow_up_date'] ?? null)) ?></td>
+              <td class="cell-actions">
                 <div class="actions">
-                  <a class="link-edit" href="<?= e(url('/index.php?tab=tracker&edit=' . $app['id'])) ?>#app-form">Editar</a>
+                  <a class="btn btn-sm" href="<?= e(url('/index.php?tab=tracker&edit=' . $app['id'])) ?>#app-form">Editar</a>
                   <?php if (in_array($app['stage'] ?? '', ['offer','accepted'], true)): ?>
-                    <a class="link-edit" href="<?= e(url('/index.php?tab=comparador')) ?>#offer-<?= e((string) $app['id']) ?>">Comparar</a>
+                    <a class="btn btn-sm" href="<?= e(url('/index.php?tab=comparador')) ?>#offer-<?= e((string) $app['id']) ?>">Comparar</a>
                   <?php endif; ?>
                   <form method="post" action="<?= e(url('/actions/delete_application.php')) ?>" onsubmit="return confirm('¿Eliminar #<?= e((string) $app['id']) ?>?');">
                     <input type="hidden" name="id" value="<?= e((string) $app['id']) ?>">

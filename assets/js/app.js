@@ -140,4 +140,87 @@
   window.addEventListener("resize", function () {
     if (window.innerWidth > 960) setNavOpen(false);
   });
+
+  const board = document.querySelector(".kanban-board");
+  if (board) {
+    const endpoint = base + "/actions/update_application_stage.php";
+    let dragging = null;
+
+    function refreshCounts() {
+      board.querySelectorAll(".kanban-col").forEach(function (col) {
+        const badge = col.querySelector(".kanban-count");
+        if (badge) badge.textContent = String(col.querySelectorAll(".kanban-card").length);
+      });
+    }
+
+    function clearDropTargets() {
+      board.querySelectorAll(".kanban-col.is-drop-target").forEach(function (col) {
+        col.classList.remove("is-drop-target");
+      });
+    }
+
+    board.addEventListener("dragstart", function (e) {
+      const card = e.target.closest(".kanban-card");
+      if (!card || !board.contains(card)) return;
+      dragging = card;
+      card.classList.add("is-dragging");
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", card.getAttribute("data-id") || "");
+    });
+
+    board.addEventListener("dragend", function () {
+      if (dragging) dragging.classList.remove("is-dragging");
+      dragging = null;
+      clearDropTargets();
+    });
+
+    board.addEventListener("dragover", function (e) {
+      const col = e.target.closest(".kanban-col");
+      if (!col || !board.contains(col)) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      if (!col.classList.contains("is-drop-target")) {
+        clearDropTargets();
+        col.classList.add("is-drop-target");
+      }
+    });
+
+    board.addEventListener("drop", function (e) {
+      e.preventDefault();
+      const col = e.target.closest(".kanban-col");
+      const card = dragging || board.querySelector(".kanban-card.is-dragging");
+      clearDropTargets();
+      if (!col || !card) return;
+      const id = card.getAttribute("data-id");
+      const stage = col.getAttribute("data-stage");
+      const from = card.closest(".kanban-col");
+      if (!id || !stage) return;
+      if (from === col) return;
+
+      col.appendChild(card);
+      refreshCounts();
+
+      const body = new URLSearchParams();
+      body.set("id", id);
+      body.set("stage", stage);
+      fetch(endpoint, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: body.toString(),
+      })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            if (!res.ok || !data.ok) throw new Error(data.message || "No se pudo actualizar el estado");
+          });
+        })
+        .catch(function () {
+          if (from) from.appendChild(card);
+          refreshCounts();
+        });
+    });
+  }
 })();

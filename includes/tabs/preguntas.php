@@ -7,7 +7,7 @@ $items = load_json_data('company_questions.json');
 <div class="page-head">
   <div>
     <h1>Mis preguntas</h1>
-    <p class="subtitle">Siete preguntas que funcionan en casi cualquier entrevista. Muestran interés real por el trabajo, no por el proceso.</p>
+    <p class="subtitle">Ocho preguntas que funcionan en casi cualquier entrevista. Muestran interés real por el trabajo, no por el proceso.</p>
   </div>
 </div>
 

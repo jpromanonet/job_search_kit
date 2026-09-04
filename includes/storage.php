@@ -589,3 +589,66 @@ function extract_text_from_upload(string $tmpPath, string $originalName, string 
     }
     throw new RuntimeException('Formato no soportado. Usá DOCX, TXT o MD.');
 }
+
+function campaign_settings_path(): string
+{
+    $config = require __DIR__ . '/../config.php';
+    $dir = $config['paths']['data'];
+    if (!is_dir($dir)) {
+        mkdir($dir, 0775, true);
+    }
+    return $dir . '/campaign_settings.json';
+}
+
+function load_campaign_settings(): array
+{
+    $config = require __DIR__ . '/../config.php';
+    $defaults = [
+        'target_applications' => (int) ($config['app']['target_applications'] ?? 465),
+        'updated_at' => null,
+    ];
+    $path = campaign_settings_path();
+    if (!is_file($path)) {
+        return $defaults;
+    }
+    $raw = file_get_contents($path);
+    if ($raw === false || trim($raw) === '') {
+        return $defaults;
+    }
+    try {
+        $data = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+    } catch (Throwable $e) {
+        return $defaults;
+    }
+    if (!is_array($data)) {
+        return $defaults;
+    }
+    $target = (int) ($data['target_applications'] ?? $defaults['target_applications']);
+    if ($target < 1) {
+        $target = $defaults['target_applications'];
+    }
+    return [
+        'target_applications' => $target,
+        'updated_at' => isset($data['updated_at']) ? (string) $data['updated_at'] : null,
+    ];
+}
+
+function campaign_target_applications(): int
+{
+    return (int) load_campaign_settings()['target_applications'];
+}
+
+function save_campaign_target_applications(int $target): int
+{
+    $target = max(1, min(10000, $target));
+    $payload = [
+        'target_applications' => $target,
+        'updated_at' => date('Y-m-d H:i:s'),
+    ];
+    $json = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if ($json === false) {
+        throw new RuntimeException('No se pudo serializar campaign_settings.json');
+    }
+    write_data_file(campaign_settings_path(), $json . "\n");
+    return $target;
+}

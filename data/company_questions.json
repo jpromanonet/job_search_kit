@@ -40,5 +40,11 @@
     "question": "¿Hay algo importante sobre el rol o el equipo que les gustaría que hubiera preguntado?",
     "why": "Cierra con apertura y deja que revelen lo que más les importa.",
     "tip": "Escuchá en silencio: suele salir la restricción o la expectativa no escrita."
+  },
+  {
+    "id": 8,
+    "question": "¿Crees que soy un fit para el rol? ¿Sí o no? ¿Y por qué?",
+    "why": "Fuerza una señal clara de interés o rechazo y te da feedback accionable en el momento.",
+    "tip": "Hacela cerca del cierre, con tono calmado. Si dudan, pedí el “por qué” concreto: gaps, seniority o timing."
   }
 ]

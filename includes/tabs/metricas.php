@@ -270,7 +270,8 @@ foreach ($apps as $app) {
 
 $offers = ($byStage['offer'] ?? 0) + ($byStage['accepted'] ?? 0);
 $accepted = $byStage['accepted'] ?? 0;
-$rejected = $byStage['rejected'] ?? 0;
+$rejected = ($byStage['rejected'] ?? 0) + ($byStage['closed'] ?? 0);
+$rejectRate = $submitted > 0 ? round(($rejected / $submitted) * 100, 1) : 0;
 
 $avg = static function (array $xs): ?float {
     return $xs ? array_sum($xs) / count($xs) : null;
@@ -298,18 +299,17 @@ $contentVsOffersMax = max(1, $contentDays, $offers, $interviews);
 $ratio = $offers > 0 ? round($contentDays / $offers, 2) : ($contentDays > 0 ? null : 0);
 
 $funnel = [
-    'Descubierto' => ($byStage['discovered'] ?? 0) + ($byStage['selected'] ?? 0),
-    'Preparando' => $byStage['preparing'] ?? 0,
     'Postulado' => $byStage['applied'] ?? 0,
     'Follow-up' => $byStage['follow_up'] ?? 0,
     'Entrevista' => ($byStage['recruiter_screen'] ?? 0) + ($byStage['technical'] ?? 0) + ($byStage['leadership'] ?? 0) + ($byStage['final'] ?? 0),
     'Oferta' => $offers,
+    'Rechazada' => $rejected,
 ];
 $funnelMax = max(1, ...array_values($funnel));
 
-$target = (int) $config['app']['target_applications'];
+$target = campaign_target_applications();
 $progressPct = min(100, round(($submitted / max(1, $target)) * 100, 1));
-$arTarget = (int) $config['app']['target_ar'];
+$arTarget = $target;
 $intlTarget = (int) $config['app']['target_intl'];
 
 $convApply = $submitted > 0 ? round(($interviews / $submitted) * 100, 1) : 0;
@@ -410,6 +410,7 @@ $kpiTriple = [
 <div class="stats metrics-hero">
   <div class="stat"><div class="stat-label">Contenido</div><div class="stat-value"><?= e((string) $contentDays) ?></div><div class="stat-meta">días publicados</div></div>
   <div class="stat"><div class="stat-label">Ofertas</div><div class="stat-value"><?= e((string) $offers) ?></div><div class="stat-meta"><?= e((string) $accepted) ?> aceptadas</div></div>
+  <div class="stat"><div class="stat-label">Rechazadas</div><div class="stat-value"><?= e((string) $rejected) ?></div><div class="stat-meta"><?= e((string) $rejectRate) ?>% de enviadas</div></div>
   <div class="stat"><div class="stat-label">Contenido / oferta</div><div class="stat-value"><?= $ratio === null ? '∞' : e((string) $ratio) ?></div><div class="stat-meta">eficiencia de marca</div></div>
   <div class="stat"><div class="stat-label">Postulaciones</div><div class="stat-value"><?= e((string) $submitted) ?><span class="stat-slash">/<?= e((string) $target) ?></span></div><div class="stat-meta"><?= e((string) $progressPct) ?>%</div></div>
   <div class="stat"><div class="stat-label">Días hechos</div><div class="stat-value"><?= e((string) $daysDone) ?><span class="stat-slash">/100</span></div><div class="stat-meta"><?= e((string) $daysInProgress) ?> en curso</div></div>

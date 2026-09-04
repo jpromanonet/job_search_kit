@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 $config = require __DIR__ . '/../../config.php';
 $days = load_plan_days();
-$appTarget = (int) $config['app']['target_applications'];
+$appTarget = campaign_target_applications();
 
 $totals = [
     'planned' => 0,
@@ -78,6 +78,18 @@ $remaining = max(0, $appTarget - $totals['logged']);
     <div class="stat-meta">días de publicación</div>
   </div>
 </div>
+
+<section class="panel goal-panel">
+  <form method="post" action="<?= e(url('/actions/save_campaign_target.php')) ?>" class="goal-form">
+    <input type="hidden" name="return_tab" value="plan">
+    <div class="field">
+      <label for="plan-goal">Meta total de postulaciones</label>
+      <input id="plan-goal" type="number" name="target_applications" min="1" max="10000" required value="<?= e((string) $appTarget) ?>">
+    </div>
+    <button type="submit" class="btn btn-sm btn-accent">Guardar meta</button>
+    <p class="muted goal-hint">Se usa en Plan, Tracker y Métricas.</p>
+  </form>
+</section>
 
 <div class="toolbar plan-toolbar sticky-toolbar">
   <div class="chip-row">

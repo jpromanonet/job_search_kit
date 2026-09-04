@@ -360,6 +360,12 @@ code {
   margin: 1.75rem auto 3rem;
   flex: 1;
 }
+.shell.shell-wide {
+  width: calc(100% - 6rem);
+  max-width: none;
+  margin-left: 3rem;
+  margin-right: 3rem;
+}
 .footer {
   display: flex;
   justify-content: space-between;
@@ -559,6 +565,7 @@ code {
 .badge-ok { color: var(--ok); border-color: #abefc6; background: #ecfdf3; }
 .badge-warn { color: var(--warn); border-color: #f9dbaf; background: #fffaeb; }
 .badge-info { color: var(--info); border-color: #b2ddff; background: #eff8ff; }
+.badge-danger { color: var(--danger); border-color: #fecaca; background: #fef2f2; }
 .badge-muted { color: var(--muted); }
 
 .day-stack { display: flex; flex-direction: column; gap: 1rem; }
@@ -673,7 +680,7 @@ code {
 
 .kanban-board {
   display: grid;
-  grid-template-columns: repeat(6, minmax(180px, 1fr));
+  grid-template-columns: repeat(7, minmax(170px, 1fr));
   gap: 0.75rem;
   overflow-x: auto;
   padding-bottom: 0.5rem;
@@ -715,14 +722,19 @@ code {
   color: #c2410c;
 }
 .kanban-col[data-stage="final"] {
-  background: #fff1f2;
-  border-top-color: #e11d48;
-  color: #be123c;
+  background: #fefce8;
+  border-top-color: #ca8a04;
+  color: #a16207;
 }
 .kanban-col[data-stage="offer"] {
   background: #ecfdf5;
   border-top-color: #047857;
   color: #047857;
+}
+.kanban-col[data-stage="rejected"] {
+  background: #fef2f2;
+  border-top-color: #dc2626;
+  color: #dc2626;
 }
 .kanban-col__head {
   display: flex;
@@ -1567,4 +1579,34 @@ code {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-soft);
+}
+
+/* Campaign goal editor */
+.goal-panel {
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+}
+.goal-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem 1rem;
+}
+.goal-form .field {
+  min-width: 12rem;
+  margin: 0;
+}
+.goal-form input[type=\"number\"] {
+  width: 9rem;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+}
+.goal-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  align-self: center;
 }

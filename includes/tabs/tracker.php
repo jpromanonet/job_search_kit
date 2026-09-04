@@ -89,6 +89,7 @@ if ($isNew) {
 }
 
 $todayNum = focus_day_from_progress(load_plan_days());
+$appTarget = campaign_target_applications();
 ?>
 <div class="page-head">
   <div>
@@ -104,8 +105,8 @@ $todayNum = focus_day_from_progress(load_plan_days());
 </div>
 
 <div class="stats">
-  <div class="stat"><div class="stat-label">Enviadas</div><div class="stat-value"><?= e((string) $totalSubmitted) ?><span class="stat-slash">/<?= e((string) (int) $config['app']['target_applications']) ?></span></div></div>
-  <div class="stat"><div class="stat-label">Argentina</div><div class="stat-value"><?= e((string) $marketCounts['ar']) ?><span class="stat-slash">/<?= e((string) (int) $config['app']['target_ar']) ?></span></div></div>
+  <div class="stat"><div class="stat-label">Enviadas</div><div class="stat-value"><?= e((string) $totalSubmitted) ?><span class="stat-slash">/<?= e((string) $appTarget) ?></span></div></div>
+  <div class="stat"><div class="stat-label">Argentina</div><div class="stat-value"><?= e((string) $marketCounts['ar']) ?><span class="stat-slash">/<?= e((string) $appTarget) ?></span></div></div>
   <?php if ((int) ($config['app']['target_intl'] ?? 0) > 0): ?>
     <div class="stat"><div class="stat-label">Internacional</div><div class="stat-value"><?= e((string) $marketCounts['intl']) ?><span class="stat-slash">/<?= e((string) (int) $config['app']['target_intl']) ?></span></div></div>
   <?php else: ?>
@@ -113,8 +114,21 @@ $todayNum = focus_day_from_progress(load_plan_days());
   <?php endif; ?>
   <div class="stat"><div class="stat-label">Follow-ups vencidos</div><div class="stat-value"><?= e((string) $overdue) ?></div></div>
   <div class="stat"><div class="stat-label">Ofertas</div><div class="stat-value"><?= e((string) ($counts['offer'] ?? 0)) ?></div></div>
+  <div class="stat"><div class="stat-label">Rechazadas</div><div class="stat-value"><?= e((string) (($counts['rejected'] ?? 0) + ($counts['closed'] ?? 0))) ?></div></div>
   <div class="stat"><div class="stat-label">Día actual</div><div class="stat-value">D<?= e((string) $todayNum) ?></div></div>
 </div>
+
+<section class="panel goal-panel">
+  <form method="post" action="<?= e(url('/actions/save_campaign_target.php')) ?>" class="goal-form">
+    <input type="hidden" name="return_tab" value="tracker">
+    <input type="hidden" name="view" value="<?= e($view) ?>">
+    <div class="field">
+      <label for="tracker-goal">Meta total de postulaciones</label>
+      <input id="tracker-goal" type="number" name="target_applications" min="1" max="10000" required value="<?= e((string) $appTarget) ?>">
+    </div>
+    <button type="submit" class="btn btn-sm btn-accent">Guardar meta</button>
+  </form>
+</section>
 
 <section class="panel">
   <form class="form-grid" method="get" action="<?= e(url('/index.php')) ?>">
@@ -289,12 +303,15 @@ $todayNum = focus_day_from_progress(load_plan_days());
 <?php if ($view === 'kanban'): ?>
   <div class="kanban-board">
     <?php
-    $kanbanStages = ['applied','follow_up','recruiter_screen','technical','final','offer'];
+    $kanbanStages = ['applied','follow_up','recruiter_screen','technical','final','offer','rejected'];
     $byStage = [];
     foreach ($apps as $app) {
         $stage = (string) ($app['stage'] ?? 'applied');
         if ($stage === 'discovered' || $stage === 'selected' || $stage === 'preparing') {
             $stage = 'applied';
+        }
+        if ($stage === 'closed') {
+            $stage = 'rejected';
         }
         $byStage[$stage][] = $app;
     }

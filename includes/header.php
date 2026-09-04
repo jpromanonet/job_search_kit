@@ -86,7 +86,7 @@ $faqActive = array_key_exists($activeTab, $faqTabs);
   </header>
   <div class="nav-backdrop" id="navBackdrop" hidden></div>
 
-  <main class="shell">
+  <main class="shell shell-wide">
     <?php if ($flash): ?>
       <div class="flash flash-<?= e($flash['type'] === 'error' ? 'danger' : ($flash['type'] === 'success' ? 'ok' : 'info')) ?>">
         <?= e($flash['message']) ?>

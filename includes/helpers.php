@@ -702,7 +702,8 @@ function stage_badge_class(string $stage): string
         'recruiter_screen', 'technical', 'leadership', 'final' => 'badge-info',
         'offer' => 'badge-warn',
         'accepted' => 'badge-ok',
-        'rejected', 'closed' => 'badge-muted',
+        'rejected' => 'badge-danger',
+        'closed' => 'badge-muted',
         default => 'badge-muted',
     };
 }

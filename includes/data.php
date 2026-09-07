@@ -18,14 +18,42 @@ function load_json_data(string $filename): array
 }
 
 /**
- * Plan hardcoded: always from data/days.php (100 days).
- * Progress fields merge from data/day_progress.json if present.
+ * Prefer MySQL plan_days (seeded by install.php).
+ * Per-user progress: use load_plan_days_for_user() in repositories.php when logged in.
+ * Fallback: data/days.php or days.json + day_progress.json.
  */
 function load_plan_days(): array
 {
+    try {
+        if (function_exists('db')) {
+            $days = db()->query('SELECT * FROM plan_days ORDER BY day_number ASC')->fetchAll();
+            if ($days) {
+                $out = [];
+                foreach ($days as $d) {
+                    $row = $d;
+                    $row['blog_publish'] = !empty($d['blog_publish']);
+                    $row['status'] = 'not_started';
+                    $row['article_url'] = null;
+                    $row['instagram_done'] = 0;
+                    $row['linkedin_posted'] = 0;
+                    $row['x_posted'] = 0;
+                    $row['notes'] = null;
+                    $row['evidence'] = null;
+                    $row['blockers'] = null;
+                    $row['carry_forward'] = null;
+                    $row['applications_logged'] = 0;
+                    $row['completed_at'] = null;
+                    $out[] = $row;
+                }
+                return $out;
+            }
+        }
+    } catch (Throwable $e) {
+        // fall through to file fallback
+    }
+
     $path = (require __DIR__ . '/../config.php')['paths']['data'] . '/days.php';
     if (!is_file($path)) {
-        // fallback legacy json
         $jsonDays = load_json_data('days.json');
     } else {
         $jsonDays = require $path;

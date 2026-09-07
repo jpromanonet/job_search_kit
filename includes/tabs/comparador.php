@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../storage.php';
+/** @var array $user */
+$userId = (int) ($user['id'] ?? 0);
+$campaign = campaign_settings_for_user($userId);
+$targets = array_merge(offer_ceiling_defaults(), $campaign);
 
-$apps = load_applications();
+$apps = load_offers_for_user($userId);
 $offers = [];
 foreach ($apps as $app) {
-    if (!in_array($app['stage'] ?? '', ['offer', 'accepted'], true)) {
-        continue;
-    }
     $o = is_array($app['offer'] ?? null) ? $app['offer'] : [];
-    $rank = compute_offer_ranking($app);
+    $rank = compute_offer_ranking($app, $targets);
     $offers[] = array_merge($app, [
         'compensation_score' => (int) ($o['compensation_score'] ?? 0),
         'role_fit_score' => (int) ($o['role_fit_score'] ?? 0),
@@ -41,38 +41,103 @@ $dims = [
     'schedule_score' => 'Flex horario (0–10)',
     'risk_score' => 'Riesgo (resta)',
 ];
+
+$fmtMoney = static function (float $n): string {
+    return number_format($n, 0, ',', '.');
+};
 ?>
 <div class="page-head">
   <div>
-    <h1>Comparador</h1>
+    <h1>Comparar tesoros</h1>
     <p class="subtitle">
-      Ranking 0–100. Ideal = <strong>full remoto desde Argentina</strong> + sueldo excelente
-      (ARS 7M / USD 10k) + <strong>horario flexible</strong>. Todo lo demás baja desde ahí.
+      Ranking contra <strong>tu techo</strong>:
+      <?= e(remote_policy_options()[$targets['ideal_remote']] ?? $targets['ideal_remote']) ?>
+      <?= !empty($targets['ideal_require_ar']) ? 'desde Argentina' : '' ?>
+      · <?= e(schedule_type_options()[$targets['ideal_schedule']] ?? $targets['ideal_schedule']) ?>
+      · ARS <?= e($fmtMoney((float) $targets['ideal_comp_ars'])) ?>
+      · USD <?= e($fmtMoney((float) $targets['ideal_comp_usd'])) ?>
+      · EUR <?= e($fmtMoney((float) $targets['ideal_comp_eur'])) ?>.
     </p>
   </div>
+  <button type="button" class="btn btn-accent" data-modal-open="techo-form">Editar techo</button>
 </div>
 
-<div class="panel rank-legend">
-  <div class="rank-legend__ideal">
-    <span class="badge badge-ok">Techo 100</span>
-    Full remoto AR · compensación excelente · horario flexible · bajo riesgo
-  </div>
-  <div class="rank-weights">
-    <span>Comp 35</span>
-    <span>Remoto AR 25</span>
-    <span>Horario 15</span>
-    <span>Fit/Growth/Cultura 15</span>
-    <span>Riesgo −15</span>
-  </div>
-</div>
+<?php render_modal_start('techo-form', 'Tu techo', false, 'wide'); ?>
+  <p class="muted" style="margin-top:0">Definí el trabajo ideal. El ranking mide cada oferta contra esto, no solo el sueldo.</p>
+  <form method="post" action="<?= e(url('/actions/save_offer_targets.php')) ?>" class="ceiling-form">
+    <div class="field">
+      <label for="ideal_comp_ars">ARS / mes</label>
+      <input id="ideal_comp_ars" type="number" name="ideal_comp_ars" min="1" step="1" required value="<?= e((string) (int) $targets['ideal_comp_ars']) ?>">
+    </div>
+    <div class="field">
+      <label for="ideal_comp_usd">USD / mes</label>
+      <input id="ideal_comp_usd" type="number" name="ideal_comp_usd" min="1" step="1" required value="<?= e((string) (int) $targets['ideal_comp_usd']) ?>">
+    </div>
+    <div class="field">
+      <label for="ideal_comp_eur">EUR / mes</label>
+      <input id="ideal_comp_eur" type="number" name="ideal_comp_eur" min="1" step="1" required value="<?= e((string) (int) $targets['ideal_comp_eur']) ?>">
+    </div>
+    <div class="field">
+      <label for="ideal_remote">Modalidad</label>
+      <select id="ideal_remote" name="ideal_remote">
+        <?php foreach (remote_policy_options() as $val => $lab):
+            if ($val === 'unknown') {
+                continue;
+            }
+        ?>
+          <option value="<?= e($val) ?>" <?= ($targets['ideal_remote'] ?? '') === $val ? 'selected' : '' ?>><?= e($lab) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="field">
+      <label for="ideal_schedule">Horario</label>
+      <select id="ideal_schedule" name="ideal_schedule">
+        <?php foreach (schedule_type_options() as $val => $lab): ?>
+          <option value="<?= e($val) ?>" <?= ($targets['ideal_schedule'] ?? '') === $val ? 'selected' : '' ?>><?= e($lab) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="field">
+      <label class="check-inline" style="margin-top:1.4rem">
+        <input type="checkbox" name="ideal_require_ar" value="1" <?= !empty($targets['ideal_require_ar']) ? 'checked' : '' ?>>
+        Tiene que ser desde Argentina
+      </label>
+    </div>
+    <div class="ceiling-weights">
+      <div class="field">
+        <label for="weight_comp">Peso sueldo</label>
+        <input id="weight_comp" type="number" name="weight_comp" min="0" max="80" value="<?= e((string) (int) $targets['weight_comp']) ?>">
+      </div>
+      <div class="field">
+        <label for="weight_remote">Peso remoto</label>
+        <input id="weight_remote" type="number" name="weight_remote" min="0" max="80" value="<?= e((string) (int) $targets['weight_remote']) ?>">
+      </div>
+      <div class="field">
+        <label for="weight_schedule">Peso horario</label>
+        <input id="weight_schedule" type="number" name="weight_schedule" min="0" max="80" value="<?= e((string) (int) $targets['weight_schedule']) ?>">
+      </div>
+      <div class="field">
+        <label for="weight_quality">Peso calidad</label>
+        <input id="weight_quality" type="number" name="weight_quality" min="0" max="80" value="<?= e((string) (int) $targets['weight_quality']) ?>">
+      </div>
+      <div class="field">
+        <label for="weight_risk">Peso riesgo (−)</label>
+        <input id="weight_risk" type="number" name="weight_risk" min="0" max="80" value="<?= e((string) (int) $targets['weight_risk']) ?>">
+      </div>
+    </div>
+    <div class="field ceiling-form__go">
+      <button type="submit" class="btn btn-accent">Guardar techo</button>
+    </div>
+  </form>
+<?php render_modal_end(); ?>
 
 <?php if (!$offers): ?>
   <div class="panel">
-    <p class="muted" style="margin:0">Todavía no hay ofertas. Pasá una postulación a <strong>Oferta</strong> en el Tracker.</p>
+    <p class="muted" style="margin:0">Todavía no hay ofertas. Pasá una postulación a <strong>Oferta</strong> en el Diario y cargá acá sueldo, remoto y scores.</p>
   </div>
 <?php else: ?>
 <section class="panel">
-  <div style="overflow:auto">
+  <div class="table-wrap">
     <table class="data-table">
       <thead>
         <tr>
@@ -100,8 +165,8 @@ $dims = [
             <td><?= e(remote_policy_options()[$o['remote_policy'] ?? ''] ?? ($o['remote_policy'] ?: '—')) ?></td>
             <td><?= e(schedule_type_options()[$o['schedule_type'] ?? ''] ?? ($o['schedule_type'] ?: '—')) ?></td>
             <td>
-              <?php if ($o['total_comp_monthly'] !== null): ?>
-                <?= e(($o['offer_currency'] ?? '') . ' ' . number_format((float) $o['total_comp_monthly'], 0, ',', '.')) ?>
+              <?php if ($o['total_comp_monthly'] !== null && $o['total_comp_monthly'] !== ''): ?>
+                <?= e(($o['offer_currency'] ?? '') . ' ' . $fmtMoney((float) $o['total_comp_monthly'])) ?>
               <?php else: ?>—<?php endif; ?>
             </td>
             <td class="muted" style="font-size:.82rem;white-space:nowrap">
@@ -118,6 +183,7 @@ $dims = [
   </div>
 </section>
 
+<div class="offer-grid">
 <?php foreach ($offers as $i => $o): ?>
   <article class="panel" id="offer-<?= e((string) $o['id']) ?>">
     <div class="panel-head">
@@ -128,10 +194,10 @@ $dims = [
     <div class="rank-bars">
       <?php
       $bars = [
-          'compensacion' => ['Compensación', 35],
-          'remoto_ar' => ['Remoto AR', 25],
-          'horario' => ['Horario', 15],
-          'calidad' => ['Calidad', 15],
+          'compensacion' => ['Compensación', (int) $targets['weight_comp']],
+          'remoto_ar' => ['Remoto', (int) $targets['weight_remote']],
+          'horario' => ['Horario', (int) $targets['weight_schedule']],
+          'calidad' => ['Calidad', (int) $targets['weight_quality']],
       ];
       foreach ($bars as $key => [$label, $max]):
           $val = max(0, (float) ($o['rank_breakdown'][$key] ?? 0));
@@ -145,11 +211,13 @@ $dims = [
       <?php $riskAbs = abs((float) ($o['rank_breakdown']['riesgo'] ?? 0)); ?>
       <div class="rank-bar rank-bar--risk">
         <div class="rank-bar__label"><span>Riesgo (resta)</span><span>−<?= e(number_format($riskAbs, 1)) ?></span></div>
-        <div class="rank-bar__track"><div class="rank-bar__fill" style="width:<?= e((string) round(($riskAbs / 15) * 100)) ?>%"></div></div>
+        <div class="rank-bar__track"><div class="rank-bar__fill" style="width:<?= e((string) round(($riskAbs / max(1, (int) $targets['weight_risk'])) * 100)) ?>%"></div></div>
       </div>
     </div>
 
-    <form method="post" action="<?= e(url('/actions/save_offer_score.php')) ?>" class="form-grid" style="margin-top:1rem">
+    <button type="button" class="btn btn-sm btn-accent" data-modal-open="offer-edit-<?= e((string) $o['id']) ?>">Editar oferta</button>
+    <?php render_modal_start('offer-edit-' . (string) $o['id'], 'Editar oferta · ' . (string) $o['company'], false, 'wide'); ?>
+    <form method="post" action="<?= e(url('/actions/save_offer_score.php')) ?>" class="form-grid">
       <input type="hidden" name="application_id" value="<?= e((string) $o['id']) ?>">
       <?php foreach ($dims as $field => $label): ?>
         <div class="field span-2">
@@ -202,9 +270,11 @@ $dims = [
       </div>
       <div class="field span-12" style="flex-direction:row;gap:.5rem">
         <button type="submit" class="btn btn-accent">Guardar y recalcular</button>
-        <a class="btn" href="<?= e(url('/index.php?tab=tracker&edit=' . $o['id'])) ?>#app-form">Editar en Tracker</a>
+        <a class="btn" href="<?= e(url('/index.php?tab=tracker&edit=' . $o['id'])) ?>">Editar en Diario</a>
       </div>
     </form>
+    <?php render_modal_end(); ?>
   </article>
 <?php endforeach; ?>
+</div>
 <?php endif; ?>

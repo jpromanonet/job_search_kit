@@ -8,26 +8,39 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 $config = require __DIR__ . '/../config.php';
 $appName = $config['app']['name'];
-$activeTab = $activeTab ?? 'plan';
+$activeTab = $activeTab ?? 'dashboard';
 $flash = take_flash();
+$navUser = $user ?? current_user();
 
-$tabs = [
-    'plan' => 'Plan 100 días',
-    'portales' => 'Portales',
-    'recomendaciones' => 'Recomendaciones',
-    'tecnologias' => 'Tecnologías',
-    'documentos' => 'Documentos',
-    'ats' => 'Palabras ATS',
-    'tracker' => 'Tracker',
-    'comparador' => 'Comparador',
-    'metricas' => 'Métricas',
+$navGroups = [
+    'write' => [
+        'label' => 'Cargar',
+        'tabs' => [
+            'tracker' => 'Diario',
+            'entrevistas' => 'Charlas',
+            'ats' => 'Roles',
+            'portales' => 'Portales',
+            'preguntas' => 'Preguntar',
+            'tecnologias' => 'Stack',
+        ],
+    ],
+    'read' => [
+        'label' => 'Mirar',
+        'tabs' => [
+            'dashboard' => 'Mapa',
+            'comparador' => 'Comparar',
+            'hr_faq' => 'HR',
+            'documentos' => 'Grimorio',
+            'metricas' => 'Métricas',
+        ],
+    ],
 ];
 
-$faqTabs = [
-    'hr_faq' => 'HR FAQ',
-    'preguntas' => 'Mis preguntas',
-];
-$faqActive = array_key_exists($activeTab, $faqTabs);
+$navRunDays = null;
+if ($navUser && function_exists('campaign_settings_for_user')) {
+    $navCampaign = campaign_settings_for_user((int) $navUser['id']);
+    $navRunDays = run_day_count((string) ($navCampaign['run_started_on'] ?? ''), date('Y-m-d'));
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -35,58 +48,55 @@ $faqActive = array_key_exists($activeTab, $faqTabs);
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= e($pageTitle ?? $appName) ?></title>
-  <link href="<?= e(url('/assets/css/app.css')) ?>" rel="stylesheet">
+  <link href="<?= e(url('/assets/css/quest.css')) ?>?v=<?= e((string) filemtime(__DIR__ . '/../assets/css/quest.css')) ?>" rel="stylesheet">
   <script>window.JOBKIT_BASE = <?= json_encode(base_path(), JSON_UNESCAPED_SLASHES) ?>;</script>
 </head>
 <body>
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand">
-        <a href="<?= e(url('/index.php?tab=plan')) ?>"><?= e($appName) ?></a>
+        <a href="<?= e(url('/index.php?tab=dashboard')) ?>">
+          <?php require __DIR__ . '/wizard.php'; ?>
+          <?= e($appName) ?>
+        </a>
       </div>
       <nav class="nav" id="siteNav">
         <div class="nav-primary">
-          <?php foreach ($tabs as $key => $label): ?>
-            <?php if ($key === 'tecnologias'): ?>
-              <div class="nav-dropdown<?= $faqActive ? ' is-active' : '' ?>">
-                <button type="button" class="nav-dropdown-toggle<?= $faqActive ? ' is-active' : '' ?>" aria-expanded="false" aria-haspopup="true">
-                  FAQ
-                  <span class="nav-caret" aria-hidden="true"></span>
-                </button>
-                <div class="nav-dropdown-menu" role="menu">
-                  <?php foreach ($faqTabs as $faqKey => $faqLabel): ?>
-                    <a role="menuitem"
-                       class="<?= $activeTab === $faqKey ? 'is-active' : '' ?>"
-                       href="<?= e(url('/index.php?tab=' . $faqKey)) ?>"><?= e($faqLabel) ?></a>
-                  <?php endforeach; ?>
-                </div>
+          <?php foreach ($navGroups as $groupKey => $group): ?>
+            <div class="nav-group nav-group--<?= e($groupKey) ?>">
+              <span class="nav-group__label"><?= e((string) $group['label']) ?></span>
+              <div class="nav-group__links">
+                <?php foreach ($group['tabs'] as $key => $label): ?>
+                  <a class="<?= $activeTab === $key ? 'is-active' : '' ?>"
+                     href="<?= e(url('/index.php?tab=' . $key)) ?>"><?= e($label) ?></a>
+                <?php endforeach; ?>
               </div>
-            <?php endif; ?>
-            <a class="<?= $activeTab === $key ? 'is-active' : '' ?>"
-               href="<?= e(url('/index.php?tab=' . $key)) ?>"><?= e($label) ?></a>
+            </div>
           <?php endforeach; ?>
         </div>
-        <form class="nav-reset-form"
-              method="post"
-              action="<?= e(url('/actions/reset_campaign.php')) ?>"
-              onsubmit="return window.confirm('REINICIAR TODO borra el progreso de los 100 días y todas las postulaciones del Tracker.\n\nNo toca el playbook, documentos ni portales.\n\n¿Seguro que querés arrancar una campaña nueva?') && window.confirm('Última confirmación: ¿reiniciar la campaña ahora?');">
-          <input type="hidden" name="confirm" value="REINICIAR">
-          <button type="submit" class="nav-reset-btn">REINICIAR TODO</button>
-        </form>
+        <div class="nav-user">
+          <?php if ($navUser): ?>
+            <?php if ($navRunDays !== null): ?>
+              <a class="run-chip" href="<?= e(url('/index.php?tab=dashboard')) ?>" title="Días postulando">
+                <strong><?= e((string) $navRunDays) ?></strong>
+                <span><?= $navRunDays === 1 ? 'día' : 'días' ?></span>
+              </a>
+            <?php endif; ?>
+            <a class="profile-chip <?= $activeTab === 'perfil' ? 'is-active' : '' ?>" href="<?= e(url('/index.php?tab=perfil')) ?>">
+              <?= e((string) ($navUser['name'] ?? 'Perfil')) ?>
+            </a>
+            <a class="btn btn-sm" href="<?= e(url('/logout.php')) ?>">Salir</a>
+          <?php endif; ?>
+        </div>
       </nav>
-      <button type="button"
-              class="nav-toggle"
-              id="navToggle"
-              aria-controls="siteNav"
-              aria-expanded="false"
-              aria-label="Abrir menú">
+      <button type="button" class="nav-toggle" id="navToggle" aria-controls="siteNav" aria-expanded="false" aria-label="Abrir menú">
         <span class="nav-toggle-bars" aria-hidden="true"></span>
       </button>
     </div>
   </header>
   <div class="nav-backdrop" id="navBackdrop" hidden></div>
 
-  <main class="shell shell-wide">
+  <main class="shell">
     <?php if ($flash): ?>
       <div class="flash flash-<?= e($flash['type'] === 'error' ? 'danger' : ($flash['type'] === 'success' ? 'ok' : 'info')) ?>">
         <?= e($flash['message']) ?>

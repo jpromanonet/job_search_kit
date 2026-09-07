@@ -9,22 +9,16 @@ require __DIR__ . '/../includes/repositories.php';
 require __DIR__ . '/../includes/auth.php';
 
 $user = require_login();
-$userId = (int) $user['id'];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect_tab('tecnologias');
 }
 
-$catalog = $_POST['category'] ?? [];
-$mine = $_POST['user_category'] ?? [];
-if (!is_array($catalog)) {
-    $catalog = [];
-}
-if (!is_array($mine)) {
-    $mine = [];
+$id = (int) ($_POST['id'] ?? 0);
+if ($id > 0 && delete_user_technology((int) $user['id'], $id)) {
+    flash('success', 'Tecnología eliminada de tu stack.');
+} else {
+    flash('error', 'No se pudo eliminar.');
 }
 
-$updated = save_tech_ratings_for_user($userId, $catalog);
-$updated += save_user_technology_categories($userId, $mine);
-flash('success', "Stack guardado ($updated cambios, solo tuyos).");
 redirect_tab('tecnologias');

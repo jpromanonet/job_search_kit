@@ -4,30 +4,31 @@ declare(strict_types=1);
 
 require __DIR__ . '/../includes/db.php';
 require __DIR__ . '/../includes/helpers.php';
-require __DIR__ . '/../includes/storage.php';
+require __DIR__ . '/../includes/data.php';
+require __DIR__ . '/../includes/repositories.php';
+require __DIR__ . '/../includes/auth.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+$user = require_login();
+$userId = (int) $user['id'];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    redirect_tab('plan');
+    redirect_tab('dashboard');
 }
 
 $target = (int) ($_POST['target_applications'] ?? 0);
-$returnTab = (string) ($_POST['return_tab'] ?? 'plan');
-if (!in_array($returnTab, ['plan', 'tracker', 'metricas'], true)) {
-    $returnTab = 'plan';
+$returnTab = (string) ($_POST['return_tab'] ?? 'dashboard');
+if (!in_array($returnTab, ['tracker', 'metricas', 'dashboard'], true)) {
+    $returnTab = 'dashboard';
 }
 
-if ($target < 1 || $target > 10000) {
-    flash('error', 'La meta debe estar entre 1 y 10.000 postulaciones.');
+if ($target < 1 || $target > 50000) {
+    flash('error', 'El objetivo tiene que estar entre 1 y 50.000 postulaciones.');
     redirect_tab($returnTab);
 }
 
 try {
-    $saved = save_campaign_target_applications($target);
-    flash('success', 'Meta de campaña actualizada a ' . $saved . ' postulaciones.');
+    $saved = save_campaign_target_for_user($userId, $target);
+    flash('success', 'Objetivo actualizado a ' . $saved . ' postulaciones.');
 } catch (Throwable $e) {
     flash('error', 'No se pudo guardar la meta: ' . $e->getMessage());
 }

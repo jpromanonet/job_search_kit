@@ -221,6 +221,37 @@ function find_document_group(int $id): ?array
     return null;
 }
 
+function find_document_group_for_user(int $userId, int $groupId): ?array
+{
+    if ($groupId < 1) {
+        return null;
+    }
+    try {
+        $stmt = db()->prepare('SELECT * FROM document_groups WHERE id = ? LIMIT 1');
+        $stmt->execute([$groupId]);
+        $row = $stmt->fetch() ?: null;
+        if (!$row) {
+            return find_document_group($groupId);
+        }
+        $owner = (int) ($row['user_id'] ?? 0);
+        if ($owner > 0 && $owner !== $userId) {
+            return null;
+        }
+        if ($owner !== $userId && array_key_exists('user_id', $row)) {
+            try {
+                db()->prepare('UPDATE document_groups SET user_id = ? WHERE id = ? AND (user_id IS NULL OR user_id = 0)')
+                    ->execute([$userId, $groupId]);
+                $row['user_id'] = $userId;
+            } catch (Throwable $e) {
+                // user_id column may not exist
+            }
+        }
+        return $row;
+    } catch (Throwable $e) {
+        return find_document_group($groupId);
+    }
+}
+
 function update_document_group_text(int $id, string $body, ?string $description = null): bool
 {
     $groups = load_document_groups();

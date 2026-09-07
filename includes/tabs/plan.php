@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 $config = require __DIR__ . '/../../config.php';
-$days = load_plan_days();
-$appTarget = campaign_target_applications();
+/** @var array $user */
+$userId = (int) ($user['id'] ?? 0);
+$days = load_plan_days_for_user($userId);
+$appTarget = campaign_target_for_user($userId);
 
 $totals = [
     'planned' => 0,
@@ -39,8 +41,8 @@ $remaining = max(0, $appTarget - $totals['logged']);
 ?>
 <div class="page-head">
   <div>
-    <h1>Plan de 100 días</h1>
-    <p class="subtitle"><?= e((string) count($days)) ?> días · solo Argentina · máx. 5 apps/día · 1 artículo/semana</p>
+    <h1>Guía opcional</h1>
+    <p class="subtitle">Ideas día a día si te sirven. Tu verdad operativa es el historial de postulaciones, no este contador.</p>
   </div>
 </div>
 

@@ -17,13 +17,11 @@ $config = [
     ],
     'app' => [
         'name' => 'JobKit',
-        // En el server: 'http://192.168.100.50/jobkit'
-        // Vacío = se detecta solo desde la URL (mejor para /jobkit/ y localhost).
+        // Vacío = se detecta solo desde la URL.
         'url' => '',
         'timezone' => 'America/Argentina/Buenos_Aires',
-        // Sin fecha fija: el plan arranca en Día 1 cuando vos lo marques.
-        'target_applications' => 465,
-        'target_ar' => 465,
+        'target_applications' => 100,
+        'target_ar' => 100,
         'target_intl' => 0,
         'apps_per_day' => 5,
         'blog_per_week' => 1,

@@ -1,15 +1,18 @@
 <?php
 /**
- * Ejemplo para el server (copiá a config.local.php).
+ * Copiá este archivo a config.local.php y completá los valores.
  */
 return [
     'app' => [
-        'url' => 'http://192.168.100.50/jobkit',
+        'url' => '',
+        'name' => 'JobKit',
     ],
     'db' => [
         'host' => '127.0.0.1',
+        'port' => 3306,
+        'name' => 'job_search_kit',
         'user' => 'root',
         'pass' => '',
-        'name' => 'job_search_kit',
+        'charset' => 'utf8mb4',
     ],
 ];

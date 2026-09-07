@@ -694,6 +694,54 @@ function stage_label(string $stage): string
     return stage_labels()[$stage] ?? $stage;
 }
 
+function pipeline_stages(): array
+{
+    $skip = ['discovered', 'selected', 'preparing', 'leadership', 'closed'];
+    return array_filter(
+        stage_labels(),
+        static fn ($key) => !in_array($key, $skip, true),
+        ARRAY_FILTER_USE_KEY
+    );
+}
+
+function normalize_pipeline_stage(string $stage): string
+{
+    return match ($stage) {
+        'leadership' => 'technical',
+        'closed' => 'rejected',
+        default => $stage,
+    };
+}
+
+function chart_palette(): array
+{
+    return [
+        '#D4920A',
+        '#C46B63',
+        '#4F8A72',
+        '#C47A52',
+        '#5E7F93',
+        '#C24B4B',
+        '#E0B07A',
+        '#8A7464',
+    ];
+}
+
+function stage_color(string $stage): string
+{
+    return match ($stage) {
+        'applied' => '#5E7F93',
+        'follow_up' => '#4F8A72',
+        'recruiter_screen' => '#C47A52',
+        'technical', 'leadership' => '#D4920A',
+        'final' => '#C47A52',
+        'offer' => '#D4920A',
+        'accepted' => '#4F8A72',
+        'rejected', 'closed' => '#C46B63',
+        default => '#8A7464',
+    };
+}
+
 function stage_badge_class(string $stage): string
 {
     return match ($stage) {
@@ -738,12 +786,21 @@ function role_families(): array
 
 function tech_categories(): array
 {
+    $out = [];
+    foreach (tech_category_meta() as $key => $meta) {
+        $out[$key] = $meta['label'];
+    }
+    return $out;
+}
+
+function tech_category_meta(): array
+{
     return [
-        'known' => 'Sé / producción reciente',
-        'old' => 'Vieja / producción previa',
-        'new' => 'Nueva',
-        'learning' => 'Aprendiendo',
-        'exclude' => 'Excluir',
+        'known' => ['label' => 'Sé / producción reciente', 'short' => 'Sé', 'tone' => 'known'],
+        'old' => ['label' => 'Vieja / producción previa', 'short' => 'Antes', 'tone' => 'old'],
+        'new' => ['label' => 'Nueva', 'short' => 'Nueva', 'tone' => 'new'],
+        'learning' => ['label' => 'Aprendiendo', 'short' => 'Aprendo', 'tone' => 'learning'],
+        'exclude' => ['label' => 'Excluir', 'short' => 'Fuera', 'tone' => 'exclude'],
     ];
 }
 
@@ -802,81 +859,174 @@ function take_flash(): ?array
     return $flash;
 }
 
+function offer_ceiling_defaults(): array
+{
+    return [
+        'ideal_comp_ars' => 7000000.0,
+        'ideal_comp_usd' => 10000.0,
+        'ideal_comp_eur' => 9000.0,
+        'ideal_remote' => 'full_remote',
+        'ideal_schedule' => 'flexible',
+        'ideal_require_ar' => 1,
+        'weight_comp' => 35,
+        'weight_remote' => 25,
+        'weight_schedule' => 15,
+        'weight_quality' => 15,
+        'weight_risk' => 15,
+    ];
+}
+
+function offer_ceiling_weight(mixed $value, int $fallback): int
+{
+    $n = (int) $value;
+    if ($n < 0 || $n > 80) {
+        return $fallback;
+    }
+    return $n;
+}
+
+function offer_ceiling_remote(string $value): string
+{
+    $value = strtolower(trim($value));
+    $keys = array_keys(remote_policy_options());
+    return in_array($value, $keys, true) ? $value : 'full_remote';
+}
+
+function offer_ceiling_schedule(string $value): string
+{
+    $value = strtolower(trim($value));
+    $keys = array_keys(schedule_type_options());
+    return in_array($value, $keys, true) ? $value : 'flexible';
+}
+
+function normalize_remote_policy(string $remote): string
+{
+    $remote = strtolower(trim($remote));
+    if ($remote === '') {
+        return '';
+    }
+    if (
+        in_array($remote, ['full_remote', 'remote', 'full remote', '100% remote', 'full-remote'], true)
+        || (str_contains($remote, 'full') && str_contains($remote, 'remote'))
+    ) {
+        return 'full_remote';
+    }
+    if (in_array($remote, ['hybrid', 'híbrido', 'hibrido'], true) || str_contains($remote, 'hybrid') || str_contains($remote, 'híbrid')) {
+        return 'hybrid';
+    }
+    if (in_array($remote, ['onsite', 'office', 'presencial'], true) || str_contains($remote, 'onsite') || str_contains($remote, 'office')) {
+        return 'onsite';
+    }
+    return 'unknown';
+}
+
+function normalize_schedule_type(string $schedule): string
+{
+    $schedule = strtolower(trim($schedule));
+    if ($schedule === '') {
+        return '';
+    }
+    if (in_array($schedule, ['flexible', 'async', 'very_flexible'], true) || str_contains($schedule, 'flex')) {
+        return 'flexible';
+    }
+    if (in_array($schedule, ['core_hours', 'core'], true)) {
+        return 'core_hours';
+    }
+    if (in_array($schedule, ['standard'], true)) {
+        return 'standard';
+    }
+    if (in_array($schedule, ['oncall_heavy', 'oncall'], true)) {
+        return 'oncall_heavy';
+    }
+    if (in_array($schedule, ['strict', 'fixed'], true)) {
+        return 'strict';
+    }
+    return $schedule;
+}
+
+function ceiling_closeness_points(string $ideal, string $actual, array $levels, float $maxPts): float
+{
+    if ($actual === '' || !isset($levels[$ideal]) || !isset($levels[$actual])) {
+        return 0.0;
+    }
+    $span = max(1, (int) max($levels) - (int) min($levels));
+    $dist = abs((int) $levels[$ideal] - (int) $levels[$actual]);
+    return round($maxPts * max(0, 1 - ($dist / $span)), 1);
+}
+
 /**
- * Ideal de ranking (100 pts): full remoto desde Argentina + sueldo excelente + horario flexible.
- * Excelente: ARS 7.000.000 / USD 10.000 mensuales (según playbook).
+ * Ranking contra el techo que definió el usuario (sueldo, remoto, horario, pesos).
  *
  * @return array{score:float,breakdown:array<string,float>,label:string}
  */
-function compute_offer_ranking(array $app): array
+function compute_offer_ranking(array $app, array $targets = []): array
 {
     $o = is_array($app['offer'] ?? null) ? $app['offer'] : [];
+    $targets = array_merge(offer_ceiling_defaults(), $targets);
     $market = (string) ($app['market'] ?? 'ar');
     $eligible = (int) ($app['location_eligible'] ?? 0) === 1;
     $currency = strtoupper((string) ($o['currency'] ?? $app['currency'] ?? ''));
     $comp = $o['total_comp_monthly'] ?? $app['salary_max'] ?? $app['salary_min'] ?? null;
     $comp = $comp !== null && $comp !== '' ? (float) $comp : null;
+    $idealArs = max(1.0, (float) ($targets['ideal_comp_ars'] ?? 7_000_000));
+    $idealUsd = max(1.0, (float) ($targets['ideal_comp_usd'] ?? 10_000));
+    $idealEur = max(1.0, (float) ($targets['ideal_comp_eur'] ?? 9_000));
+    $wComp = (float) offer_ceiling_weight($targets['weight_comp'] ?? 35, 35);
+    $wRemote = (float) offer_ceiling_weight($targets['weight_remote'] ?? 25, 25);
+    $wSchedule = (float) offer_ceiling_weight($targets['weight_schedule'] ?? 15, 15);
+    $wQuality = (float) offer_ceiling_weight($targets['weight_quality'] ?? 15, 15);
+    $wRisk = (float) offer_ceiling_weight($targets['weight_risk'] ?? 15, 15);
+    $idealRemote = offer_ceiling_remote((string) ($targets['ideal_remote'] ?? 'full_remote'));
+    $idealSchedule = offer_ceiling_schedule((string) ($targets['ideal_schedule'] ?? 'flexible'));
+    $requireAr = (int) ($targets['ideal_require_ar'] ?? 1) === 1;
 
-    $remote = strtolower(trim((string) ($o['remote_policy'] ?? '')));
-    $scheduleSel = strtolower(trim((string) ($o['schedule_type'] ?? '')));
+    $remote = normalize_remote_policy((string) ($o['remote_policy'] ?? ''));
+    $scheduleSel = normalize_schedule_type((string) ($o['schedule_type'] ?? ''));
     $scheduleScore = max(0, min(10, (int) ($o['schedule_score'] ?? 0)));
     $fit = max(0, min(10, (int) ($o['role_fit_score'] ?? 0)));
     $growth = max(0, min(10, (int) ($o['growth_score'] ?? 0)));
     $culture = max(0, min(10, (int) ($o['culture_score'] ?? 0)));
     $risk = max(0, min(10, (int) ($o['risk_score'] ?? 0)));
-    // Auto-fill compensation_score from money if blank but keep for display
     $compManual = max(0, min(10, (int) ($o['compensation_score'] ?? 0)));
 
-    // --- Compensación (0–35) vs excelente ---
     $excellent = match ($currency) {
-        'ARS' => 7_000_000.0,
-        'USD' => 10_000.0,
-        'EUR' => 9_000.0,
-        default => $market === 'ar' ? 7_000_000.0 : 10_000.0,
+        'ARS' => $idealArs,
+        'USD' => $idealUsd,
+        'EUR' => $idealEur,
+        default => $market === 'ar' ? $idealArs : $idealUsd,
     };
     if ($comp !== null && $comp > 0) {
-        $compPts = min(35.0, ($comp / $excellent) * 35.0);
+        $compPts = min($wComp, ($comp / $excellent) * $wComp);
     } elseif ($compManual > 0) {
-        $compPts = ($compManual / 10) * 35.0;
+        $compPts = ($compManual / 10) * $wComp;
     } else {
         $compPts = 0.0;
     }
 
-    // --- Remoto AR (0–25) ---
-    // Ideal: full remote + elegible desde Argentina
-    $remotePts = 0.0;
-    if (
-        in_array($remote, ['full_remote', 'remote', 'full remote', '100% remote', 'full-remote'], true)
-        || (str_contains($remote, 'full') && str_contains($remote, 'remote'))
-    ) {
-        $remotePts = $eligible || $market === 'ar' ? 25.0 : 16.0;
-    } elseif (in_array($remote, ['hybrid', 'híbrido', 'hibrido'], true) || str_contains($remote, 'hybrid') || str_contains($remote, 'híbrid')) {
-        $remotePts = $eligible || $market === 'ar' ? 12.0 : 7.0;
-    } elseif (in_array($remote, ['onsite', 'office', 'presencial'], true) || str_contains($remote, 'onsite') || str_contains($remote, 'office')) {
-        $remotePts = 2.0;
-    } elseif ($remote !== '') {
-        $remotePts = 8.0;
-    } elseif ($eligible && $market === 'intl') {
-        $remotePts = 10.0;
+    $remotePts = ceiling_closeness_points($idealRemote, $remote, [
+        'full_remote' => 3,
+        'hybrid' => 2,
+        'onsite' => 1,
+        'unknown' => 0,
+    ], $wRemote);
+    if ($requireAr && $remotePts > 0 && !($eligible || $market === 'ar')) {
+        $remotePts = round($remotePts * 0.64, 1);
     }
 
-    // --- Horario flexible (0–15) ---
-    // Ideal: flexible / async-friendly
-    if (in_array($scheduleSel, ['flexible', 'async', 'very_flexible'], true) || str_contains($scheduleSel, 'flex')) {
-        $schedulePts = 15.0;
-    } elseif (in_array($scheduleSel, ['standard', 'core_hours'], true)) {
-        $schedulePts = 8.0;
-    } elseif (in_array($scheduleSel, ['strict', 'oncall_heavy', 'fixed'], true)) {
-        $schedulePts = 3.0;
+    if ($scheduleSel !== '') {
+        $schedulePts = ceiling_closeness_points($idealSchedule, $scheduleSel, [
+            'flexible' => 3,
+            'core_hours' => 2,
+            'standard' => 2,
+            'strict' => 1,
+            'oncall_heavy' => 1,
+        ], $wSchedule);
     } else {
-        $schedulePts = ($scheduleScore / 10) * 15.0;
+        $schedulePts = ($scheduleScore / 10) * $wSchedule;
     }
 
-    // --- Calidad subjetiva fit/growth/culture (0–15) ---
-    $qualityPts = (($fit + $growth + $culture) / 30) * 15.0;
-
-    // --- Riesgo (−15 máx) ---
-    $riskPenalty = ($risk / 10) * 15.0;
+    $qualityPts = (($fit + $growth + $culture) / 30) * $wQuality;
+    $riskPenalty = ($risk / 10) * $wRisk;
 
     $raw = $compPts + $remotePts + $schedulePts + $qualityPts - $riskPenalty;
     $score = max(0.0, min(100.0, round($raw, 1)));
@@ -956,14 +1106,178 @@ function null_if_blank(?string $value): ?string
     return $value === '' ? null : $value;
 }
 
+function normalize_profile_link(string $value, string $kind = 'url'): string
+{
+    $value = trim($value);
+    if ($value === '') {
+        return '';
+    }
+    if ($kind === 'phone') {
+        return preg_replace('/[^\d+().\s-]/', '', $value) ?? $value;
+    }
+    if (($kind === 'x' || $kind === 'instagram') && str_starts_with($value, '@')) {
+        $host = $kind === 'x' ? 'x.com' : 'www.instagram.com';
+        $value = 'https://' . $host . '/' . ltrim($value, '@');
+    } elseif (!preg_match('#^https?://#i', $value)) {
+        $value = 'https://' . ltrim($value, '/');
+    }
+    return $value;
+}
+
 function uploads_dir(): string
 {
     $config = require __DIR__ . '/../config.php';
     $dir = $config['paths']['uploads'] . '/documents';
     if (!is_dir($dir)) {
-        mkdir($dir, 0775, true);
+        if (!@mkdir($dir, 0775, true) && !is_dir($dir)) {
+            throw new RuntimeException('No se pudo crear la carpeta de documentos.');
+        }
+    }
+    if (!is_writable($dir)) {
+        @chmod($dir, 0775);
+    }
+    if (!is_writable($dir)) {
+        throw new RuntimeException('La carpeta de documentos no es escribible.');
     }
     return $dir;
+}
+
+function store_uploaded_file(string $tmpName, string $dest): void
+{
+    $ok = is_uploaded_file($tmpName) && @move_uploaded_file($tmpName, $dest);
+    if (!$ok && is_file($tmpName)) {
+        $ok = @copy($tmpName, $dest);
+    }
+    if ((!$ok || !is_file($dest) || filesize($dest) < 1) && is_file($tmpName)) {
+        $bytes = @file_get_contents($tmpName);
+        $ok = $bytes !== false && @file_put_contents($dest, $bytes) !== false;
+    }
+    if (is_uploaded_file($tmpName) || is_file($tmpName)) {
+        @unlink($tmpName);
+    }
+    if (!$ok || !is_file($dest) || filesize($dest) < 1) {
+        throw new RuntimeException('No se pudo guardar el archivo en disco.');
+    }
+    @chmod($dest, 0666);
+}
+
+function attach_document_group_meta(array $file): array
+{
+    $groupId = (int) ($file['group_id'] ?? 0);
+    if ($groupId < 1) {
+        return $file;
+    }
+    try {
+        $stmt = db()->prepare('SELECT name, slug FROM document_groups WHERE id = ? LIMIT 1');
+        $stmt->execute([$groupId]);
+        $group = $stmt->fetch() ?: null;
+        if ($group) {
+            $file['group_name'] = $group['name'] ?? ($file['group_name'] ?? '');
+            $file['slug'] = $group['slug'] ?? ($file['slug'] ?? '');
+        }
+    } catch (Throwable $e) {
+        // keep the file row even if the group lookup fails
+    }
+    return $file;
+}
+
+function find_downloadable_document(int $fileId, int $groupId = 0): ?array
+{
+    $fetchPdf = static function (string $sql, array $params): ?array {
+        $stmt = db()->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch() ?: null;
+        return $row ? attach_document_group_meta($row) : null;
+    };
+
+    try {
+        if ($fileId > 0) {
+            $row = $fetchPdf('SELECT * FROM document_files WHERE id = ? LIMIT 1', [$fileId]);
+            if ($row) {
+                return $row;
+            }
+            $row = $fetchPdf(
+                "SELECT * FROM document_files WHERE group_id = ? AND format = 'pdf' ORDER BY uploaded_at DESC LIMIT 1",
+                [$fileId]
+            );
+            if ($row) {
+                return $row;
+            }
+        }
+        if ($groupId > 0) {
+            $row = $fetchPdf(
+                "SELECT * FROM document_files WHERE group_id = ? AND format = 'pdf' ORDER BY uploaded_at DESC LIMIT 1",
+                [$groupId]
+            );
+            if ($row) {
+                return $row;
+            }
+        }
+    } catch (Throwable $e) {
+        if ($fileId > 0) {
+            $json = find_document_file($fileId);
+            return $json ? attach_document_group_meta($json) : null;
+        }
+    }
+    return null;
+}
+
+function resolve_document_path(array $file): ?string
+{
+    $dir = uploads_dir();
+    $names = [];
+    $stored = (string) ($file['stored_name'] ?? '');
+    if ($stored !== '') {
+        $names[] = $stored;
+        $names[] = basename(str_replace('\\', '/', $stored));
+    }
+    $original = basename(str_replace('\\', '/', (string) ($file['original_name'] ?? '')));
+    if ($original !== '') {
+        $names[] = $original;
+    }
+    foreach (array_unique($names) as $name) {
+        $path = $dir . DIRECTORY_SEPARATOR . $name;
+        if (is_file($path) && filesize($path) > 0) {
+            return $path;
+        }
+    }
+
+    $slug = preg_replace('/[^a-z0-9\-]+/i', '-', (string) ($file['slug'] ?? '')) ?: '';
+    $format = preg_replace('/[^a-z0-9]+/i', '', (string) ($file['format'] ?? 'pdf')) ?: 'pdf';
+    $globs = [];
+    if ($slug !== '') {
+        $globs[] = $dir . DIRECTORY_SEPARATOR . '*_' . $slug . '_' . $format . '_*.' . $format;
+        $globs[] = $dir . DIRECTORY_SEPARATOR . $slug . '_' . $format . '_*.' . $format;
+        $globs[] = $dir . DIRECTORY_SEPARATOR . '*' . $slug . '*.' . $format;
+    }
+    foreach ($globs as $pattern) {
+        $hits = glob($pattern) ?: [];
+        usort($hits, static fn ($a, $b) => filemtime($b) <=> filemtime($a));
+        foreach ($hits as $path) {
+            if (is_file($path) && filesize($path) > 0) {
+                return $path;
+            }
+        }
+    }
+    return null;
+}
+
+function document_download_name(array $file): string
+{
+    $base = trim((string) ($file['group_name'] ?? ''));
+    if ($base === '') {
+        $base = pathinfo((string) ($file['original_name'] ?? ''), PATHINFO_FILENAME);
+    }
+    if ($base === '') {
+        $base = 'documento';
+    }
+    $base = preg_replace('/[^\p{L}\p{N} ._()-]+/u', '', $base) ?: 'documento';
+    $base = trim((string) preg_replace('/\s+/', ' ', $base));
+    $ext = strtolower((string) ($file['format'] ?? pathinfo((string) ($file['stored_name'] ?? ''), PATHINFO_EXTENSION)));
+    if ($ext === '') {
+        $ext = 'pdf';
+    }
+    return $base . '.' . $ext;
 }
 
 function detect_format_from_upload(string $filename, string $mime): ?string
@@ -988,4 +1302,21 @@ function detect_format_from_upload(string $filename, string $mime): ?string
         return 'txt';
     }
     return null;
+}
+
+function render_modal_start(string $id, string $title, bool $autoOpen = false, string $size = ''): void
+{
+    $class = 'jk-modal' . ($size !== '' ? ' jk-modal--' . $size : '');
+    $auto = $autoOpen ? ' data-auto-open="1"' : '';
+    echo '<dialog class="' . e($class) . '" id="' . e($id) . '"' . $auto . '>';
+    echo '<div class="jk-modal__panel">';
+    echo '<div class="jk-modal__head">';
+    echo '<h2>' . e($title) . '</h2>';
+    echo '<button type="button" class="btn btn-sm" data-modal-close aria-label="Cerrar">Cerrar</button>';
+    echo '</div><div class="jk-modal__body">';
+}
+
+function render_modal_end(): void
+{
+    echo '</div></div></dialog>';
 }

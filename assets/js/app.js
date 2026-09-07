@@ -13,7 +13,7 @@
       el.classList.add("is-today");
       history.replaceState(null, "", "#day-" + day);
     } else {
-      window.location.href = base + "/index.php?tab=plan&filter=all#day-" + day;
+      window.location.href = base + "/index.php?tab=dashboard";
     }
   }
 
@@ -221,6 +221,77 @@
           if (from) from.appendChild(card);
           refreshCounts();
         });
+    });
+  }
+
+  function openJobkitModal(dialog) {
+    if (!dialog || typeof dialog.showModal !== "function") return;
+    if (!dialog.open) dialog.showModal();
+  }
+
+  function closeJobkitModal(dialog) {
+    if (dialog && typeof dialog.close === "function" && dialog.open) {
+      dialog.close();
+    }
+  }
+
+  function stripModalQuery() {
+    try {
+      const url = new URL(location.href);
+      let changed = false;
+      ["new", "edit"].forEach(function (key) {
+        if (url.searchParams.has(key)) {
+          url.searchParams.delete(key);
+          changed = true;
+        }
+      });
+      if (url.hash && /#(app-form|nota-form|mis-preguntas|mis-portales|mi-stack)/.test(url.hash)) {
+        url.hash = "";
+        changed = true;
+      }
+      if (changed) {
+        history.replaceState(null, "", url.pathname + url.search + url.hash);
+      }
+    } catch (err) {
+      // ignore
+    }
+  }
+
+  document.querySelectorAll("[data-modal-open]").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      const id = btn.getAttribute("data-modal-open");
+      const dialog = id ? document.getElementById(id) : null;
+      if (!dialog) return;
+      e.preventDefault();
+      openJobkitModal(dialog);
+    });
+  });
+
+  document.querySelectorAll("[data-modal-close]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      closeJobkitModal(btn.closest("dialog"));
+    });
+  });
+
+  document.querySelectorAll("dialog.jk-modal").forEach(function (dialog) {
+    dialog.addEventListener("click", function (e) {
+      if (e.target === dialog) closeJobkitModal(dialog);
+    });
+    dialog.addEventListener("close", stripModalQuery);
+    if (dialog.getAttribute("data-auto-open") === "1") {
+      openJobkitModal(dialog);
+    }
+  });
+
+  const toTop = document.getElementById("toTop");
+  if (toTop) {
+    const toggleToTop = function () {
+      toTop.hidden = window.scrollY < 280;
+    };
+    toggleToTop();
+    window.addEventListener("scroll", toggleToTop, { passive: true });
+    toTop.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
 })();

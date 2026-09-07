@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
+require __DIR__ . '/../includes/db.php';
 require __DIR__ . '/../includes/helpers.php';
 require __DIR__ . '/../includes/data.php';
-require __DIR__ . '/../includes/storage.php';
+require __DIR__ . '/../includes/repositories.php';
+require __DIR__ . '/../includes/auth.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+$user = require_login();
+$userId = (int) $user['id'];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect_tab('plan');
@@ -36,7 +37,7 @@ if ($articleUrl !== '' && !filter_var($articleUrl, FILTER_VALIDATE_URL)) {
 $filter = preg_replace('/[^a-z_]/', '', (string) ($_POST['return_filter'] ?? 'all')) ?: 'all';
 
 try {
-    save_day_progress($dayNumber, [
+    upsert_day_progress($userId, $dayNumber, [
         'status' => $status,
         'applications_logged' => $apps,
         'article_url' => $articleUrl !== '' ? $articleUrl : null,

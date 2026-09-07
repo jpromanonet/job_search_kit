@@ -9,22 +9,23 @@ require __DIR__ . '/../includes/repositories.php';
 require __DIR__ . '/../includes/auth.php';
 
 $user = require_login();
-$userId = (int) $user['id'];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect_tab('tecnologias');
 }
 
-$catalog = $_POST['category'] ?? [];
-$mine = $_POST['user_category'] ?? [];
-if (!is_array($catalog)) {
-    $catalog = [];
-}
-if (!is_array($mine)) {
-    $mine = [];
+$groupId = (int) ($_POST['group_id'] ?? 0);
+
+try {
+    save_user_technology(
+        (int) $user['id'],
+        (string) ($_POST['name'] ?? ''),
+        (string) ($_POST['category'] ?? 'known'),
+        $groupId > 0 ? $groupId : null
+    );
+    flash('success', 'Tecnología agregada a tu stack.');
+} catch (Throwable $e) {
+    flash('error', $e->getMessage());
 }
 
-$updated = save_tech_ratings_for_user($userId, $catalog);
-$updated += save_user_technology_categories($userId, $mine);
-flash('success', "Stack guardado ($updated cambios, solo tuyos).");
 redirect_tab('tecnologias');

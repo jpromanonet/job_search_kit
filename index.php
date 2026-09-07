@@ -6,31 +6,37 @@ require __DIR__ . '/includes/db.php';
 require __DIR__ . '/includes/helpers.php';
 require __DIR__ . '/includes/data.php';
 require __DIR__ . '/includes/storage.php';
+require __DIR__ . '/includes/repositories.php';
+require __DIR__ . '/includes/auth.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+auth_start();
+$user = require_login();
 
 $config = require __DIR__ . '/config.php';
 
-$allowedTabs = ['plan', 'portales', 'recomendaciones', 'hr_faq', 'preguntas', 'tecnologias', 'documentos', 'ats', 'tracker', 'comparador', 'metricas'];
-$activeTab = $_GET['tab'] ?? 'plan';
-if (!in_array($activeTab, $allowedTabs, true)) {
-    $activeTab = 'plan';
+$allowedTabs = [
+    'dashboard', 'tracker', 'entrevistas', 'portales',
+    'hr_faq', 'preguntas', 'tecnologias', 'documentos', 'ats',
+    'comparador', 'metricas', 'perfil',
+];
+$activeTab = $_GET['tab'] ?? 'dashboard';
+if ($activeTab === 'plan' || $activeTab === 'recomendaciones' || !in_array($activeTab, $allowedTabs, true)) {
+    $activeTab = 'dashboard';
 }
 
 $tabTitles = [
-    'plan' => 'Plan 100 días',
+    'dashboard' => 'Mapa',
+    'tracker' => 'Diario',
+    'entrevistas' => 'Charlas',
     'portales' => 'Portales',
-    'recomendaciones' => 'Recomendaciones',
-    'hr_faq' => 'HR FAQ',
-    'preguntas' => 'Mis preguntas',
-    'tecnologias' => 'Tecnologías',
-    'documentos' => 'Documentos',
-    'ats' => 'Palabras ATS',
-    'tracker' => 'Tracker',
-    'comparador' => 'Comparador',
+    'hr_faq' => 'HR',
+    'preguntas' => 'Preguntar',
+    'tecnologias' => 'Stack',
+    'documentos' => 'Grimorio',
+    'ats' => 'Roles',
+    'comparador' => 'Comparar',
     'metricas' => 'Métricas',
+    'perfil' => 'Perfil',
 ];
 $pageTitle = ($tabTitles[$activeTab] ?? 'JobKit') . ' · ' . $config['app']['name'];
 

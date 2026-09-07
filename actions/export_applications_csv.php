@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
+require __DIR__ . '/../includes/db.php';
 require __DIR__ . '/../includes/helpers.php';
-require __DIR__ . '/../includes/storage.php';
+require __DIR__ . '/../includes/repositories.php';
+require __DIR__ . '/../includes/auth.php';
 
-$rows = load_applications();
+auth_start();
+$user = require_login();
+$rows = load_applications_for_user((int) $user['id']);
 
 header('Content-Type: text/csv; charset=utf-8');
 header('Content-Disposition: attachment; filename="applications_' . date('Ymd_His') . '.csv"');

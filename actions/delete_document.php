@@ -5,10 +5,9 @@ declare(strict_types=1);
 require __DIR__ . '/../includes/db.php';
 require __DIR__ . '/../includes/helpers.php';
 require __DIR__ . '/../includes/storage.php';
+require __DIR__ . '/../includes/auth.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+require_login();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect_tab('documentos');

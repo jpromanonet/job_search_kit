@@ -5,10 +5,10 @@ declare(strict_types=1);
 require __DIR__ . '/../includes/db.php';
 require __DIR__ . '/../includes/helpers.php';
 require __DIR__ . '/../includes/storage.php';
+require __DIR__ . '/../includes/auth.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+$user = require_login();
+$userId = (int) $user['id'];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect_tab('documentos');
@@ -20,13 +20,19 @@ if ($groupId < 1) {
     redirect_tab('documentos');
 }
 
+if (!find_document_group_for_user($userId, $groupId)) {
+    flash('error', 'Grupo no encontrado.');
+    redirect_tab('documentos');
+}
+
 $body = (string) ($_POST['body_text'] ?? '');
 $description = null_if_blank($_POST['description'] ?? null);
 
 try {
     if (db_available()) {
         $stmt = db()->prepare(
-            'UPDATE document_groups SET body_text = :body_text, description = :description WHERE id = :id'
+            'UPDATE document_groups SET body_text = :body_text, description = :description
+             WHERE id = :id'
         );
         $stmt->execute([
             ':body_text' => $body === '' ? null : $body,

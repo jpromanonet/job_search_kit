@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 require __DIR__ . '/../includes/db.php';
 require __DIR__ . '/../includes/helpers.php';
-require __DIR__ . '/../includes/storage.php';
+require __DIR__ . '/../includes/data.php';
+require __DIR__ . '/../includes/repositories.php';
+require __DIR__ . '/../includes/auth.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+$user = require_login();
+$userId = (int) $user['id'];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    redirect_tab('tracker', ['view' => 'kanban']);
+    redirect_tab('tracker');
 }
 
 $id = (int) ($_POST['id'] ?? 0);
@@ -28,20 +29,18 @@ function stage_update_respond(bool $ok, string $message, array $extra = [], bool
         exit;
     }
     flash($ok ? 'success' : 'error', $message);
-    redirect_tab('tracker', ['view' => 'kanban']);
+    $view = (string) ($_POST['view'] ?? '');
+    redirect_tab('tracker', $view === 'kanban' ? ['view' => 'kanban'] : []);
 }
 
 if ($id < 1 || !array_key_exists($stage, stage_labels())) {
     stage_update_respond(false, 'Postulación o estado inválido.', [], $wantsJson);
 }
 
-$app = find_application($id);
-if (!$app) {
+$saved = update_application_stage_for_user($userId, $id, $stage);
+if (!$saved) {
     stage_update_respond(false, 'Postulación no encontrada.', [], $wantsJson);
 }
-
-$app['stage'] = $stage;
-$saved = upsert_application($app);
 
 stage_update_respond(
     true,

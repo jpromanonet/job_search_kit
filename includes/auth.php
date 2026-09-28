@@ -2,11 +2,84 @@
 
 declare(strict_types=1);
 
+function auth_session_save_path(): ?string
+{
+    $candidates = [
+        dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'sessions',
+        rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'jobkit_sessions',
+    ];
+    foreach ($candidates as $dir) {
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0777, true);
+        }
+        if (!is_dir($dir)) {
+            continue;
+        }
+        @chmod($dir, 0777);
+        $probe = $dir . DIRECTORY_SEPARATOR . '.write';
+        if (@file_put_contents($probe, '1') === false) {
+            continue;
+        }
+        @unlink($probe);
+        return $dir;
+    }
+    return null;
+}
+
 function auth_start(): void
 {
-    if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start();
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        auth_touch_cookie();
+        return;
     }
+
+    $lifetime = 86400;
+    $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+    $savePath = auth_session_save_path();
+    if ($savePath !== null) {
+        session_save_path($savePath);
+    }
+    ini_set('session.gc_maxlifetime', (string) $lifetime);
+    ini_set('session.cookie_lifetime', (string) $lifetime);
+    session_name('jobkit_session');
+    session_set_cookie_params([
+        'lifetime' => $lifetime,
+        'path' => '/',
+        'secure' => $secure,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+    session_start([
+        'cookie_lifetime' => $lifetime,
+        'cookie_httponly' => true,
+        'cookie_samesite' => 'Lax',
+        'cookie_secure' => $secure,
+        'use_strict_mode' => true,
+        'use_only_cookies' => true,
+    ]);
+    auth_touch_cookie($lifetime, $secure);
+}
+
+function auth_touch_cookie(?int $lifetime = null, ?bool $secure = null): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE || session_id() === '') {
+        return;
+    }
+    $lifetime = $lifetime ?? 86400;
+    $lifetime = max(86400, $lifetime);
+    if ($secure === null) {
+        $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+    }
+    $params = session_get_cookie_params();
+    setcookie(session_name(), session_id(), [
+        'expires' => time() + $lifetime,
+        'path' => $params['path'] ?: '/',
+        'domain' => $params['domain'] ?? '',
+        'secure' => $secure,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+    $_SESSION['_last_activity'] = time();
 }
 
 function current_user(): ?array
@@ -55,6 +128,7 @@ function login_user(array $user): void
     auth_start();
     session_regenerate_id(true);
     $_SESSION['user_id'] = (int) $user['id'];
+    auth_touch_cookie();
     try {
         $stmt = db()->prepare('UPDATE users SET last_login_at = NOW() WHERE id = ?');
         $stmt->execute([(int) $user['id']]);
@@ -69,7 +143,14 @@ function logout_user(): void
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {
         $p = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], (bool) $p['secure'], (bool) $p['httponly']);
+        setcookie(session_name(), '', [
+            'expires' => time() - 42000,
+            'path' => $p['path'] ?: '/',
+            'domain' => $p['domain'] ?? '',
+            'secure' => (bool) $p['secure'],
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
     }
     session_destroy();
 }
@@ -94,7 +175,7 @@ function create_user(string $email, string $password, string $name, string $role
     $email = strtolower(trim($email));
     $name = trim($name);
     if ($email === '' || $name === '' || strlen($password) < 8) {
-        throw new InvalidArgumentException('Datos de usuario inválidos.');
+        throw new InvalidArgumentException('Datos de usuario invÃ¡lidos.');
     }
     $hash = password_hash($password, PASSWORD_DEFAULT);
     $pdo = db();
